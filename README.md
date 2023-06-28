@@ -55,7 +55,7 @@ using DrWatson
 which auto-activate the project and enable local path handling from DrWatson.
 
 
-## Real World Data ((see Section 3.1): 
+## Real World Data (see Section 3.1): 
 ### TO APPEAR
       julia scripts/model_solvit.jl
 
@@ -70,12 +70,16 @@ To run the model, follow the steps below:
       
    >  This command executes one instance of the model with n = 64 (refer to Table 3 for more details).
 
+* Note: The previous command can be replaced by the usage of an IDE such as VSCode or by running the script in the Julia REPL.  
+
 ### Output
 
 After running the model, you can expect the following output:
 
 + A summary of the results will be displayed in the terminal or console.
+
 + Graphs representing all possible facilities, including the first optimal solution, will be saved in the plots directory.
+
 + A CSV file reflecting the selected solution will be saved in the data/sims directory.
 + The file data/exp_pro/table.txt will be incremented with a summary of the solution and processing times.
 
