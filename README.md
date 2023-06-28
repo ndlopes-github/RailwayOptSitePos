@@ -60,15 +60,24 @@ which auto-activate the project and enable local path handling from DrWatson.
       julia scripts/model_solvit.jl
 
 ##  Simulated Data (see Section 3.2): 
-0. Open a console at the project dir and do:
 
-       julia scripts/model_sim.jl  
+### Running the Model
 
-This command runs one instance of the model with  n = 64 (see Table 3). 
-- A summary of the results are shown in the terminal.
-- Graphs representing all the possible facilities along with the first optimal solution are saved at plots dir.
-- A CSV file reflecting the selected solution is saved at data/sims dir   
-- File  data/exp_pro/table.txt is incremented with the summary of the solution and processing times.
+To run the model, follow the steps below:
+
+0. Open a console or terminal at the project directory.
+1. Run the following command: julia scripts/model_sim.jl
+      
+   >  This command executes one instance of the model with n = 64 (refer to Table 3 for more details).
+
+### Output
+
+After running the model, you can expect the following output:
+
++ A summary of the results will be displayed in the terminal or console.
++ Graphs representing all possible facilities, including the first optimal solution, will be saved in the plots directory.
++ A CSV file reflecting the selected solution will be saved in the data/sims directory.
++ The file data/exp_pro/table.txt will be incremented with a summary of the solution and processing times.
 
 
 # Contributing
