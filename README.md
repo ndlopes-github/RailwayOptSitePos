@@ -5,16 +5,12 @@ This repository reflects the implementation of an algorithm based on a paper tha
 ## Paper Details
 
    > Title: Minimizing costs in signal provision from communication antennas along a railway line
-
    > Authors: A. Araújo 1, J. O. Cerdeira 2, N. Lopes 3, A. Moura 4
-
    > 1- CMUC, Department of Mathematics, University of Coimbra;
     2- CMA, Department of Mathematics, NOVA University Lisbon;
     3- ISEL, Polytechnic of Lisboa, and CEMAT, University of Lisboa;
     4- ISEP-LEMA, Polytechnic of Porto, and CMUP, University of Porto;
-
    > Journal: [To appear]
-
    > Publication Date: [To appear]
 
 # Description
@@ -66,6 +62,9 @@ To run the model, follow the steps below:
 
 0. Open a console or terminal at the project directory.
 1. Create the directories: mkdir plots data data/sims data/exp_pro
+
+      > These directories are required in order to save the output files.
+
 2. Run the following command: julia scripts/model_sim.jl
 
    >  This command executes one instance of the model with n = 64 (refer to Table 3 for more details).
@@ -80,8 +79,8 @@ After running the model, you can expect the following output:
 
 + Graphs representing the signal coverage of all facilities and the the signal coverage provided by the optimal solutions, are be saved in the plots directory.
    
-   Example: Signal Coverage of the facilities selection
-   ![Signal Coverage of the facilities selection](aux/solution_coverage.png)
+   Example: Signal coverage of the facility selection
+   ![Signal coverage of the facility selection](aux/solution_coverage.png)
 
 + A CSV file reflecting the selected solution will be saved in the data/sims directory.
 
