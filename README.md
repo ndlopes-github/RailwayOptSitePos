@@ -6,14 +6,18 @@ This repository reflects the implementation of an algorithm based on a paper tha
 
 ## Paper Details
 
-    Title: Minimizing costs in signal provision from communication antennas along a railway line
-    Authors: A. Araújo 1, J. O. Cerdeira 2, N. Lopes 3, A. Moura 4
-    1- CMUC, Department of Mathematics, University of Coimbra
-    2- CMA, Department of Mathematics, NOVA University Lisbon
-    3- ISEL, Polytechnic of Lisboa, and CEMAT, University of Lisboa
-    4- ISEP-LEMA, Polytechnic of Porto, and CMUP, University of Porto
-    Journal: [To appear]
-    Publication Date: [To appear]
+   > Title: Minimizing costs in signal provision from communication antennas along a railway line
+   
+   > Authors: A. Araújo 1, J. O. Cerdeira 2, N. Lopes 3, A. Moura 4
+   
+   > 1- CMUC, Department of Mathematics, University of Coimbra;
+    2- CMA, Department of Mathematics, NOVA University Lisbon;
+    3- ISEL, Polytechnic of Lisboa, and CEMAT, University of Lisboa;
+    4- ISEP-LEMA, Polytechnic of Porto, and CMUP, University of Porto;
+   
+   > Journal: [To appear]
+   
+   > Publication Date: [To appear]
 
 # Description
 
@@ -56,11 +60,11 @@ which auto-activate the project and enable local path handling from DrWatson.
       julia scripts/model_solvit.jl
 
 ##  Simulated Data (see Section 3.2): 
-Executing from the terminal:
+0. Open a console at the project dir and do:
 
-      >julia scripts/model_sim.jl
+       julia scripts/model_sim.jl  
 
-Runs one instance of the model with  n = 64 (see Table 3). 
+This command runs one instance of the model with  n = 64 (see Table 3). 
 - A summary of the results are shown in the terminal.
 - Graphs representing all the possible facilities along with the first optimal solution are saved at plots dir.
 - A CSV file reflecting the selected solution is saved at data/sims dir   
