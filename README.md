@@ -49,14 +49,21 @@ using DrWatson
 which auto-activate the project and enable local path handling from DrWatson.
 
 
-##  Simulated Data:
+## Real World Data ((see Section 3.1): 
+### TO APPEAR
+      julia scripts/model_solvit.jl
 
-      julia scripts/model_sim.jl
+##  Simulated Data (see Section 3.2): 
+Executing from the terminal:
 
+      >julia scripts/model_sim.jl
 
-## Real World Data: 
-   
-   julia scripts/model_solvit.jl
+Runs one instance of the model with  n = 64 (see Table 3). 
+- A summary of the results are shown in the terminal.
+- Graphs representing all the possible facilities along with the first optimal solution are saved at plots dir.
+- A CSV file reflecting the selected solution is saved at data/sims dir   
+- File  data/exp_pro/table.txt is incremented with the summary of the solution and processing times.
+
 
 # Contributing
 
