@@ -7,16 +7,16 @@ This repository reflects the implementation of an algorithm based on a paper tha
 ## Paper Details
 
    > Title: Minimizing costs in signal provision from communication antennas along a railway line
-   
+
    > Authors: A. Araújo 1, J. O. Cerdeira 2, N. Lopes 3, A. Moura 4
-   
+
    > 1- CMUC, Department of Mathematics, University of Coimbra;
     2- CMA, Department of Mathematics, NOVA University Lisbon;
     3- ISEL, Polytechnic of Lisboa, and CEMAT, University of Lisboa;
     4- ISEP-LEMA, Polytechnic of Porto, and CMUP, University of Porto;
-   
+
    > Journal: [To appear]
-   
+
    > Publication Date: [To appear]
 
 # Description
@@ -26,7 +26,7 @@ The code in this repository aims to replicate the algorithm described in the for
 
 # USAGE
 
-## Julia and DrWatson 
+## Julia and DrWatson
 This code base is using the [Julia Language](https://julialang.org/) and
 [DrWatson](https://juliadynamics.github.io/DrWatson.jl/stable/)
 to make a reproducible scientific project named
@@ -55,22 +55,23 @@ using DrWatson
 which auto-activate the project and enable local path handling from DrWatson.
 
 
-## Real World Data (see Section 3.1): 
+## Real World Data (see Section 3.1):
 ### TO APPEAR
       julia scripts/model_solvit.jl
 
-##  Simulated Data (see Section 3.2): 
+##  Simulated Data (see Section 3.2):
 
 ### Running the Model
 
 To run the model, follow the steps below:
 
 0. Open a console or terminal at the project directory.
-1. Run the following command: julia scripts/model_sim.jl
-      
+1. Create the directories: mkdir plots data data/sims data/exp_pro
+2. Run the following command: julia scripts/model_sim.jl
+
    >  This command executes one instance of the model with n = 64 (refer to Table 3 for more details).
 
-* Note: The previous command can be replaced by the usage of an IDE such as VSCode or by running the script in the Julia REPL.  
+* Note: The previous command can be replaced by the usage of an IDE such as VSCode or by running the script in the Julia REPL.
 
 ### Output
 
@@ -79,6 +80,9 @@ After running the model, you can expect the following output:
 + A summary of the results will be displayed in the terminal or console.
 
 + Graphs representing all possible facilities, including the first optimal solution, will be saved in the plots directory.
+   
+   Example: Signal Coverage of the facilities selection
+   ![Signal Coverage of the facilities selection](aux/solution_coverage.png)
 
 + A CSV file reflecting the selected solution will be saved in the data/sims directory.
 + The file data/exp_pro/table.txt will be incremented with a summary of the solution and processing times.
@@ -94,4 +98,3 @@ This project is currently under [choose license] license. Please refer to the LI
 # Contact
 
 If you have any questions or inquiries regarding this codebase or the associated paper, please contact [Insert contact information].
-
