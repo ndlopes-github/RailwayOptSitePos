@@ -1,7 +1,5 @@
 # RailwayOptSitePos
 
-## DOCUMENTATION: WORK IN PROGRESS
-
 This repository reflects the implementation of an algorithm based on a paper that is set to appear. Please note that the contents of this repository are currently under development and may undergo changes as we refine the implementation to align with the paper. We encourage you to keep an eye on this repository for updates.
 
 ## Paper Details
@@ -24,7 +22,7 @@ This repository reflects the implementation of an algorithm based on a paper tha
 The code in this repository aims to replicate the algorithm described in the forthcoming paper. Our intention is to provide a practical implementation that can be utilized and tested by the community. As such, please consider this code as a work in progress, subject to further modifications and improvements.
 
 
-# USAGE
+# Installation
 
 ## Julia and DrWatson
 This code base is using the [Julia Language](https://julialang.org/) and
@@ -54,6 +52,7 @@ using DrWatson
 ```
 which auto-activate the project and enable local path handling from DrWatson.
 
+# USAGE 
 
 ## Real World Data (see Section 3.1):
 ### TO APPEAR
@@ -79,12 +78,13 @@ After running the model, you can expect the following output:
 
 + A summary of the results will be displayed in the terminal or console.
 
-+ Graphs representing all possible facilities, including the first optimal solution, will be saved in the plots directory.
++ Graphs representing the signal coverage of all facilities and the the signal coverage provided by the optimal solutions, are be saved in the plots directory.
    
    Example: Signal Coverage of the facilities selection
    ![Signal Coverage of the facilities selection](aux/solution_coverage.png)
 
 + A CSV file reflecting the selected solution will be saved in the data/sims directory.
+
 + The file data/exp_pro/table.txt will be incremented with a summary of the solution and processing times.
 
 
