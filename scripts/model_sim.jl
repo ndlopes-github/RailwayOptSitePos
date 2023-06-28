@@ -16,7 +16,7 @@ import .PltFs as pf
 
 #PARAMETERS FOR TEST WITH SIMULATED DATA
 ###############################################
-Scale=2^5 # Debug
+Scale=2^4 
 Nsites=Scale*4
 Length=Nsites*4
 ################################################
@@ -459,11 +459,9 @@ open(datadir("sims","table.txt"), "a") do file
 end
 
 # Saves a table with all the obtained solutions for one simulation
-println(">>>>>>>>>>WARNING: NOT Saving Solutions and Reports to CSV")
-#=
 println(">>>>>>>>>> Saving Solutions and Reports to CSV")
 wsave(datadir("exp_pro",savename("sol_matrix",Par,"csv")),df_sols)
 println(">>>>>>>>>>")
-=#
+
 
 println(">>>>>>>>>> END")
