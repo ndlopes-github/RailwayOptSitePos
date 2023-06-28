@@ -28,3 +28,8 @@ using DrWatson
 @quickactivate "RailwayOptSitePos"
 ```
 which auto-activate the project and enable local path handling from DrWatson.
+
+
+# Documentation is  WORK IN PROGRESS
+
+# Using the model with Simulated Data: (see scripts/model_sim.jl) 

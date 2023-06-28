@@ -1,6 +1,6 @@
 module Pp
 using DrWatson
-@quickactivate "OptSitePos"
+@quickactivate "RailwayOptSitePos"
 
 using XLSX
 using DataFrames
@@ -342,111 +342,6 @@ function Mconstructor!(M,SEs,Atypes,types,Par,Npoints,k,j)
   end
 end
 
-
-"""
-DEPRECATED
-"""
-function FakeIntervals(Par;
-  StartPoint=0.0, # Starting Point in Km
-  EndPoint=500.0, # Ending Point in Km
-  Npoints=50000,
-  PrioritiesList=1:10, #Priorities from 1 to 10
-  Atypes=[10.0 5.0 25.0; 20.0 7.5 45.0; 35.0 10.0 75.0; 40.0 15.0 100.0], # Fair range Good range Height
-  #Atypes = [1.0 0.5 25.0; 2.0 0.75 45.0; 3.5 1.0 75.0; 4.0 1.5 100.0], #Types of intervals
-  NFairIs=6,
-  NGoodIs=3,
-  seed=1123,
-  save= true,
-  saveprefix="FInt_"
-)
-
-  if seed > 0
-    Random.seed!(seed)
-  end
-  Nant = Par[:nants]
-  nm = ["A$(i)" for i ∈ 1:Nant]
-  Δ = (EndPoint - StartPoint) / (Npoints - 1)
-
-
-  types = [rand(1:size(Atypes, 1)) for i ∈ 1:Nant]
-
-  #Factor for cj
-  Priorities = rand(PrioritiesList, Nant)
-  Factors = ones(Nant)
-
-  for i ∈ 1:Nant
-    Factors[i] = Atypes[types[i], 3] / (size(Atypes, 1) * minimum(Atypes[:, 3]))
-  end
-
-  # Costs are defined by the priorities and by the types of antennas
-
-  cj = hcat(nm, Factors .* Priorities)
-
-
-  M = (Par[:cll] - 20.0) * ones((Npoints, Nant + 1))
-  M[:, 1] = [(StartPoint + (i - 1) * Δ) for i ∈ 1:Npoints]
-  SE = Array{Any}(undef, 0, 4) # [km antena number g(2)/f(1) s(1)/e(0)]
-
-  for j ∈ 1:Nant
-    SP = StartPoint
-    EP = EndPoint
-    Nfis = rand(1:NFairIs)
-    Ngis = rand(0:NGoodIs)
-    Nis = Nfis + Ngis
-    SEs = zeros(Nis, 3)
-    fgs = shuffle(hcat(ones(Int, Nfis)', 2 * ones(Int, Ngis)'))
-
-    centers = zeros(Nis)
-    centers .= StartPoint .+ rand(Uniform(0, 1), Nis) .* (EndPoint - StartPoint)
-    sort!(centers)
-
-    for (ifg, fg) ∈ enumerate(fgs)
-      s = centers[ifg] - rand(Uniform(0.5, 1))*Atypes[types[j], fg] / 2.0
-      e = centers[ifg] + rand(Uniform(0.5, 1))*Atypes[types[j], fg] / 2.0
-      if e ≥ EP
-        e = EP
-      end
-      if s ≤ SP
-        s = SP
-      end
-      if s ≥ e
-        e=s # This interval will not be considered in the partition
-      end
-
-      SEs[ifg, :] = [s e fg]
-      SP = e
-    end
-
-    for k ∈ 1:Nis
-      # Discard degenerate intervals with s >= e
-      if SEs[k, 1] ≥ SEs[k, 2]
-        continue
-      end
-
-      SE = vcat(SE, [SEs[k, 1] j SEs[k, 3] 1])
-      SE = vcat(SE, [SEs[k, 2] j SEs[k, 3] 0])
-
-      for p ∈ 1:Npoints
-        if SEs[k, 1] ≤ M[p, 1] ≤ SEs[k, 2]
-          if Int(SEs[k, 3]) == 1
-            M[p, j+1] = (Par[:cll] + Par[:clh]) / 2.0
-          elseif Int(SEs[k, 3]) == 2
-            M[p, j+1] = Par[:clh] + Atypes[types[j], 3]
-          end
-        end
-      end
-    end
-  end
-
-
-  if save == true
-  wsave(datadir("exp_pro", saveprefix*"cjMSEnm.jld2"),
-        Dict("cj"=> cj,"M"=>M,"SE"=> SE,"nm"=> nm))
-  end
-
-  cj, SE, M, nm
-
-end
 
 
 
