@@ -16,7 +16,7 @@ import .PltFs as pf
 
 #PARAMETERS FOR TEST WITH SIMULATED DATA
 ###############################################
-Scale=2^4 
+Scale=2^3 
 Nsites=Scale*4
 Length=Nsites*4
 ################################################
