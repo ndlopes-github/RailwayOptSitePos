@@ -7,19 +7,21 @@ This repository reflects the implementation of an algorithm based on a paper tha
    > Title: Minimizing costs in signal provision from communication antennas along a railway line
 
    > Authors: A. Araújo 1, J. O. Cerdeira 2, N. Lopes 3, A. Moura 4
+   
    > 1- CMUC, Department of Mathematics, University of Coimbra;
     2- CMA, Department of Mathematics, NOVA University Lisbon;
     3- ISEL, Polytechnic of Lisboa, and CEMAT, University of Lisboa;
     4- ISEP-LEMA, Polytechnic of Porto, and CMUP, University of Porto;
    
    > Journal: [To appear]
+
    > Publication Date: [To appear]
 
-   > Abstract: 
+   > Abstract: [To appear]
 
 # Description
 
-The code in this repository aims to replicate the algorithm described in the forthcoming paper. Our intention is to provide a practical implementation that can be utilized and tested by the community. As such, please consider this code as a work in progress, subject to further modifications and improvements.
+The code in this repository aims to replicate the algorithm described in the forthcoming paper. Our intention is to provide a practical implementation that can be used and tested by the community. As such, please consider this code as a work in progress, subject to further modifications and improvements.
 
 
 # Installation
@@ -63,9 +65,9 @@ To run the model, follow the steps below:
 0. Open a console or terminal at the project directory.
 
 1. Run the following command: 
-      
-         $julia scripts/model_sim.jl
-
+   ```
+   $julia scripts/model_sim.jl
+   ```
       >   This command executes one instance of the model with n = 64 (see Table 3 for more details).
 
 * Note: The previous command can be replaced by the usage of an IDE such as VSCode or by running the script in the Julia REPL.
@@ -89,9 +91,9 @@ After running the model, you can expect the following output:
 ## Real World Data (see Section 3.1):
 
 Follow the steps of the Simulated Data replacing the command in 1. by :
-
-      $julia scripts/model_solvit.jl
-
+```
+$julia scripts/model_solvit.jl
+```
 
 # Contributing
 
