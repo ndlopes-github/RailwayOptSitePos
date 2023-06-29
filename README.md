@@ -63,13 +63,11 @@ which auto-activate the project and enable local path handling from DrWatson.
 To run the model, follow the steps below:
 
 0. Open a console or terminal at the project directory.
-1. Create the directories: mkdir plots data data/sims data/exp_pro
+1. Run the following command: 
+      
+      >julia scripts/model_sim.jl
 
-      > These directories are required in order to save the output files.
-
-2. Run the following command: julia scripts/model_sim.jl
-
-   >  This command executes one instance of the model with n = 64 (refer to Table 3 for more details).
+         This command executes one instance of the model with n = 64 (see Table 3 for more details).
 
 * Note: The previous command can be replaced by the usage of an IDE such as VSCode or by running the script in the Julia REPL.
 
@@ -77,16 +75,16 @@ To run the model, follow the steps below:
 
 After running the model, you can expect the following output:
 
-+ A summary of the results will be displayed in the terminal or console.
++ A summary of the results and log information displayed at the terminal or console.
 
-+ Graphs representing the signal coverage of all facilities and the the signal coverage provided by the optimal solutions, are be saved in the plots directory.
++ Graphs representing the signal coverage of all facilities and the the signal coverage provided by the optimal solutions saved in the plots directory.
    
    Example: Signal coverage of the facility selection
-   ![Signal coverage of the facility selection](aux/solution_coverage.png)
+   ![Signal coverage of the facility selection](plots/solution_coverage.png)
 
-+ A CSV file reflecting the selected solution will be saved in the data/sims directory.
++ A CSV file reflecting the optimal facility selection  saved at  data/sims directory.
 
-+ The file data/exp_pro/table.txt will be incremented with a summary of the solution and processing times.
++ An incremental table  with the summary of the optimal solutions saved at data/exp_pro/table.txt and data/exp_pro/raw_table.csv. 
 
 
 # Contributing
@@ -98,4 +96,5 @@ This project is currently under [choose license] license. Please refer to the LI
 
 # Contact
 
-If you have any questions or inquiries regarding this codebase or the associated paper, please contact [Insert contact information].
+If you have any questions or inquiries regarding this codebase or the associated paper, please contact: nuno(dot)lopes(at)isel(dot)pt.
+ 
