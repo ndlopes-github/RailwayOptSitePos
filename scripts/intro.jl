@@ -1,8 +1,9 @@
 using DrWatson
 @quickactivate "RailwayOptSitePos"
 
-# Here you may include files from the source directory
-include(srcdir("dummy_src_file.jl"))
+# Here you may include files from the scripts/source directory
+# Running the model with the Simulated Data
+include(scriptsdir("model_sim.jl"))
 
 println(
 """
