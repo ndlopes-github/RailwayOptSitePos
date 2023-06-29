@@ -1,0 +1,18 @@
+1×15 DataFrame
+ Row │ Nants  Nints  NOnAnt  Nvars  Nconstr  OBvalues  GoodCov  FairCov  NoCov    NoCovMaxL  DPtimes  OptConstT  Solvertimes  MaxRSS   TStatus
+     │ Int64  Int64  Int64   Int64  Int64    Float64   Float64  Float64  Float64  Float64    Float64  Float64    Float64      Float64  Terminat…
+─────┼───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   1 │   256   2135      66   6661    43432     125.8  307.404  152.285  50.8059    13.4013  1.68311    1.24737      1.26075  1681.04  OPTIMAL
+
+1×15 DataFrame
+ Row │ Nants  Nints  NOnAnt  Nvars  Nconstr  OBvalues  GoodCov  FairCov  NoCov    NoCovMaxL  DPtimes  OptConstT  Solvertimes  MaxRSS   TStatus
+     │ Int64  Int64  Int64   Int64  Int64    Float64   Float64  Float64  Float64  Float64    Float64  Float64    Float64      Float64  Terminat…
+─────┼───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   1 │   128   1042      32   3254    20303      49.6  153.628  78.0004  24.3716    7.96626  1.55844    1.00688      1.34798  1264.29  OPTIMAL
+
+1×15 DataFrame
+ Row │ Nants  Nints  NOnAnt  Nvars  Nconstr  OBvalues  GoodCov  FairCov  NoCov    NoCovMaxL  DPtimes  OptConstT  Solvertimes  MaxRSS   TStatus
+     │ Int64  Int64  Int64   Int64  Int64    Float64   Float64  Float64  Float64  Float64    Float64  Float64    Float64      Float64  Terminat…
+─────┼───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   1 │   128    950      36   2978    18736      76.2  153.657  77.7568   24.586    12.0394   1.4751   0.979875     0.753729  1183.23  OPTIMAL
+
