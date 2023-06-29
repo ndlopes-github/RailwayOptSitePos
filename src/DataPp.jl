@@ -6,187 +6,32 @@ using XLSX
 using DataFrames
 using Random
 using Distributions
-using OnlineStats # For Mean and ExponentialWeight
-using SmoothingSplines
-using SavitzkyGolay
 
 export LoadJLD2Data, Solvit,FakeIntervals
 
-
 """
-Compute the moving average of an input array using a sliding window of size `m`.
+Solvit(Par; df25, df30, dfw, smoothmethod="NotImplemented", save=true, saveprefix="")
 
-This Docstring was generated using ChatGPT
-MovingAverage Function used in the smoothing of real data
-source: https://discourse.julialang.org/t/smoothing-noisy-data-using-moving-mean/65329/6
-
-The moving average is computed by sliding a window of size `m` across the input array `A`,
-and computing the average of the values within each window. The resulting array has the
-same size as the input array, and contains the moving averages.
+This function processes the real data provided by Solvit.
 
 # Arguments
-- `A::AbstractArray`: the input array to compute the moving average for.
-- `m::Int`: the size of the sliding window used to compute the moving average. The window
-  is centered around each element of the input array, and has a size of `m` elements.
+- `Par`: A dictionary containing parameters for the solving operation.
+- `df25`: Data frame containing information for antennas of type-1.
+- `df30`: Data frame containing information for antennas of type-2.
+- `dfw`: Data frame containing the table of priorities.
+- `smoothmethod`: (optional-NOT IMPLEMENTED YET) A string representing the smoothing method to be used. Default is "NotImplemented".
+- `save`: (optional) A boolean indicating whether to save the results. Default is `true`.
+- `saveprefix`: (optional) A string representing the prefix to be used for the saved file. Default is an empty string.
 
 # Output
-- `out::AbstractArray`: an array of the same size as the input array, containing the
-  computed moving averages.
+- `cj`: Cost data frame containing the costs of each antenna.
+- `SE`: Array containing information about the partition of the domain.
+- `M`: Matrix containing the transferred data from the input data frames.
+- `nm`: Array of station names used for distinguishing between 25 and 30 DataFrames.
 
-# Examples
-```julia
-julia> A = [1, 2, 3, 4, 5]
-julia> moving_average(A, 3)
-5-element Vector{Float64}:
- 1.5
- 2.0
- 3.0
- 4.0
- 4.5
-"""
-function moving_average(A::AbstractArray, m::Int)
-  out = similar(A)
-  R = CartesianIndices(A)
-  Ifirst, Ilast = first(R), last(R)
-  I1 = m÷2 * oneunit(Ifirst)
-  for I in R
-      n, s = 0, zero(eltype(out))
-      for J in max(Ifirst, I-I1):min(Ilast, I+I1)
-          s += A[J]
-          n += 1
-      end
-      out[I] = s/n
-  end
-  return out
-end
-
-
-"""
-smooth!(M; smoothmethod=("ExponentialWeight", 0.1))
-
-This function takes a matrix M and performs data cleaning and smoothing on each column of the matrix according to the specified method. The function starts by fixing single holes (missing values) in the data. It then applies the selected smoothing method to each column.
-
-Parameters:
-
-    M: a matrix of data to be smoothed
-    smoothmethod: a tuple specifying the smoothing method to be used. The first element of the tuple specifies the smoothing method and must be one of the following:
-        "NoSmoothing": no smoothing is applied
-        "ExponentialWeight": exponential smoothing is applied, where the second element of the tuple specifies the smoothing parameter α. 0 ≤ α ≤ 1, where α=1 means no smoothing.
-        "MovingAverage": moving average smoothing is applied, where the second element of the tuple specifies the window size.
-        "SmoothingSplines": smoothing splines are applied, where the second element of the tuple specifies the regularization parameter λ.
-        "SavitzkyGolay": Savitzky-Golay smoothing is applied, where the second element of the tuple is a tuple specifying the window size and the polynomial degree.
-
-Returns:
-
-    M: the smoothed matrix
-
-Notes:
-
-    The function assumes that missing values in the data are represented by -1111.1111.
-    The SavitzkyGolay method works with a window size of 11 and degree of 1.
-    Increasing the degree of the SavitzkyGolay method will introduce artificial spikes.
-
-TODO:
-
-    Update the error message to include new smoothing methods.
-    SideNote 1: Forecast.jl does not install
-    SideNote 2: Loess does not work with NaN
-"""
-function smooth!(M; smoothmethod=("ExponentialWeight", 0.1))
-  # Start by cleaning single holes in data.
-  for column in 2:size(M, 2)
-    for row in 2:size(M, 1)-1
-      # Here we fix one step holes (missing values) in data
-      if (
-        (M[row-1, column] != -1111.1111) &&
-        (M[row+1, column] != -1111.1111) &&
-        (M[row, column] == -1111.1111)
-      )
-        M[row, column] = (M[row-1, column] + M[row+1, column]) / 2.0
-      end
-    end
-    #First and last rows fix.
-    if (M[1, column] == -1111.1111) && (M[2, column] != -1111.1111)
-      M[1, column] = M[2, column]
-    end
-    if (M[end, column] == -1111.1111) && (M[end-1, column] != -1111.1111)
-      M[end, column] = M[end-1, column]
-    end
-
-    if smoothmethod[1] == "ExponentialWeight"
-      α = smoothmethod[2] # 0 ≤ α ≤ 1 (no smoothing with α=1)
-      o = Mean(weight=ExponentialWeight(α))
-      M[:, column] = [value(OnlineStats.fit!(o, yi)) for yi in M[:, column]]
-    elseif smoothmethod[1] == "MovingAverage"
-      window = smoothmethod[2]
-      M[:, column] = moving_average(M[:, column], window)
-    elseif smoothmethod[1] == "SmoothingSplines"
-      spl = fit(SmoothingSpline, M[:, 1], M[:, column], smoothmethod[2]) # λ=250.0
-      M[:, column] = predict(spl) # fitted vector
-    elseif smoothmethod[1] == "SavitzkyGolay"
-      y = M[:, column]
-      sg = savitzky_golay(y, smoothmethod[2][1],smoothmethod[2][2])
-      M[:,column] = sg.y
-    elseif smoothmethod[1] == "NoSmoothing"
-    else
-      error(">>>>>>>>>>> Smoothing Method not defined.\n
-      Options are: (''NoSmoothing'',) , (''ExponentialWeight'', α), (''MovingAverage'',window))\n
-      e.g. α = 0.1 ∈ [0,1] -> Exponential Weight\n
-      window=17 -> Moving Average window size.
-      Notes:
-      NoSmoothing OK
-      SavitzkyGolay works with window=11, degree=1
-      Increasing degree will introduces artificial spikes
-
-      TODO: UPDATE THIS MESSAGE!
-       ")
-    end
-  end
-  M
-end
-
-
-
-"""
-!chatgpt generated: to correct"
-Solves an optimization problem based on signal data from two sets of antennas, 25 and 30.
-The function loads dataframes containing the signal data, preprocesses them by replacing undefined values,
-and checks if they are compatible.
-It then extracts a table of priorities for each antenna from an external spreadsheet and reorders it to be compatible with the signal dataframes.
-It further renames the stations and combines the signal data from both sets of antennas into a matrix, which is then smoothed using the specified method.
-Finally, the function computes a set of subintervals (start and end times) where the signal is above or below certain thresholds for each antenna,
-and saves the resulting data (priorities, subintervals, matrix data, and station names) in a file if `save` is true.
-
-# Arguments
-- `Par::Dict`: a Dict containing parameters for the optimization problem.
-- `df25::String`: a string representing the path to the file containing the signal data from the antennas 25.
-- `df30::String`: a string representing the path to the file containing the signal data from the antennas 30.
-- `smoothmethod::String = "ExponentialWeight"`: a string representing the method to use for smoothing the signal data. Default is "ExponentialWeight".
-- `save::Bool = true`: a boolean representing whether to save the resulting data in a file. Default is true.
-- `saveprefix::String = ""`: a string representing a prefix to use for the name of the file where the data will be saved. Default is an empty string.
-
-# Returns
-A tuple containing four elements:
-- `cj::Matrix{Float64}`: a matrix of priorities for each antenna.
-- `SE::Matrix{Any}`: a matrix of subintervals where the signal is above or below certain thresholds for each antenna.
-- `M::Matrix{Float64}`: a matrix of the combined signal data from both sets of antennas, smoothed.
-- `nm::Vector{String}`: a vector of station names, renamed to distinguish between the antennas 25 and 30.
-
-
-Function to load and process Solvit data.
-Args: Par => Dictionary with the method parameters.
-It returns Matrices M (antennas data), Partition SE intervalas, cj priorities and the names (nm) of sites
-Solvit Data may be smoothed (smoothing=true) in order to better SE partitions: Work in progress.
-This function is taylored to Solvit's Data
-e.g.:
-c, SE, M, nm = pp.Solvit(Par;
-df25 = ("..../data/exp_raw/Douro_coverage_25.xlsx", "Sheet1"), # Dataframe
-df30 = ("..../data/exp_raw/Douro_coverage_30.xlsx", "Sheet1"), # Dataframe
-dfw = ("..../data/exp_raw/DouroPriority.xlsx", "Sheet1"), #Priorities
-smoothing=true)
 """
 function Solvit(Par; df25, df30, dfw,
-  smoothmethod="ExponentialWeight",
+  smoothmethod="NotImplemented",
   save=true,
   saveprefix="")
   # Number of evaluation points in Dataframes
@@ -197,11 +42,11 @@ function Solvit(Par; df25, df30, dfw,
   cj = DataFrame(XLSX.readtable(dfw...))
   cjdict = Dict(cj[i, 1] => parse(Float64, cj[i, 2]) for i ∈ 1:size(cj, 1))
 
-  cjf = 1.2 # Multiplication Factor for costs of antennas30
+  cjf = 1.2 # Multiplication Factor for costs of antennas30 (Type-2)
 
   # Data loading and procesing
-  df25 = DataFrame(XLSX.readtable(df25...))
-  df30 = DataFrame(XLSX.readtable(df30...))
+  df25 = DataFrame(XLSX.readtable(df25...)) #(Type-2)
+  df30 = DataFrame(XLSX.readtable(df30...)) #(Type-2)
 
   # Undefined signal data (no signal) is replaced by -1111.1111
   # In order to simplify partition construction
@@ -245,8 +90,6 @@ function Solvit(Par; df25, df30, dfw,
   M = hcat(M25, M30[:, 2:end])
   @assert(size(M, 2) - 1 == Par[:nants])
 
-  smooth!(M; smoothmethod=smoothmethod)
-
   SE = Array{Any}(undef, 0, 4)
 
   for j ∈ 1:Par[:nants]
@@ -288,7 +131,7 @@ function Solvit(Par; df25, df30, dfw,
   wsave(datadir("exp_pro", saveprefix*"cjMSEnm.jld2"),
     Dict("cj" => cj, "M" => M, "SE" => SE, "nm" => nm))
   end
-  println(">>>>>>>>>>> Smoothing method = ", smoothmethod)
+  #println(">>>>>>>>>>> Smoothing method = ", smoothmethod)
   cj, SE, M, nm
 end
 
