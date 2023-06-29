@@ -15,6 +15,8 @@ This repository reflects the implementation of an algorithm based on a paper tha
    > Journal: [To appear]
    > Publication Date: [To appear]
 
+   > Abstract: 
+
 # Description
 
 The code in this repository aims to replicate the algorithm described in the forthcoming paper. Our intention is to provide a practical implementation that can be utilized and tested by the community. As such, please consider this code as a work in progress, subject to further modifications and improvements.
@@ -52,10 +54,6 @@ which auto-activate the project and enable local path handling from DrWatson.
 
 # USAGE 
 
-## Real World Data (see Section 3.1):
-### TO APPEAR
-      julia scripts/model_solvit.jl
-
 ##  Simulated Data (see Section 3.2):
 
 ### Running the Model
@@ -63,11 +61,12 @@ which auto-activate the project and enable local path handling from DrWatson.
 To run the model, follow the steps below:
 
 0. Open a console or terminal at the project directory.
+
 1. Run the following command: 
       
-      >julia scripts/model_sim.jl
+         $julia scripts/model_sim.jl
 
-         This command executes one instance of the model with n = 64 (see Table 3 for more details).
+      >   This command executes one instance of the model with n = 64 (see Table 3 for more details).
 
 * Note: The previous command can be replaced by the usage of an IDE such as VSCode or by running the script in the Julia REPL.
 
@@ -85,6 +84,13 @@ After running the model, you can expect the following output:
 + A CSV file reflecting the optimal facility selection  saved at  data/sims directory.
 
 + An incremental table  with the summary of the optimal solutions saved at data/exp_pro/table.txt and data/exp_pro/raw_table.csv. 
+
+
+## Real World Data (see Section 3.1):
+
+Follow the steps of the Simulated Data replacing the command in 1. by :
+
+      $julia scripts/model_solvit.jl
 
 
 # Contributing
