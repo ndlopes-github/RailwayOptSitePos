@@ -45,8 +45,8 @@ Par = Dict(
   # Data loader/generator and processing options
   # Functions at PreProcessing.jl
   # ["Solvit", LoadJLD2Data"]
-  :preprocess => "Solvit",
-  #:preprocess => "LoadJLD2Data",
+  #:preprocess => "Solvit",
+  :preprocess => "LoadJLD2Data",
   # Number of antennas
   :nants=>118, #solvit
   #Max number of solutions to search
@@ -71,8 +71,12 @@ dataproctime = @elapsed begin
       df25 = (datadir("exp_raw","Douro_coverage_25.xlsx"), "Sheet1"), # Dataframe
       df30 = (datadir("exp_raw","Douro_coverage_30.xlsx"), "Sheet1"), # Dataframe
       dfw = (datadir("exp_raw","DouroPriority.xlsx"), "Sheet1"), #Priorities
-      # Options for smoothing: Not Implemented in the public version
+      # Options for smoothing:
       smoothmethod = ("NoSmoothing",),
+      # smoothmethod = ("ExponentialWeight", 0.1), #Not OK
+      # smoothmethod = ("MovingAverage",21) # The same as SavitzkyGolay with degree 1
+      # smoothmethod = ("SmoothingSplines", 1.0),
+      # smoothmethod =("SavitzkyGolay", (21,5)) #(odd window,polynomial degree)
       saveprefix="raw_")
   # Load all data from pre-saved jld2 files.
   # To avoid unnecessary preprocessing of data
