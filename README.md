@@ -56,7 +56,7 @@ which auto-activate the project and enable local path handling from DrWatson.
 
 # USAGE 
 
-##  Simulated Data (see Section 3.2):
+##  Real Data (see Section 3.1):
 
 ### Running the Model
 
@@ -66,9 +66,9 @@ To run the model, follow the steps below:
 
 1. Run the following command: 
    ```
-   $julia scripts/model_sim.jl
+   $julia scripts/model_solvit.jl
    ```
-      >   This command executes one instance of the model with n = 64 (see Table 3 for more details).
+      >   This command executes instance 5 of the model with $LMAX^n=16.2$ and $LMIN^g=138.5$ (see Table 2 for more details).
 
 * Note: The previous command can be replaced by the usage of an IDE such as VSCode or by running the script in the Julia REPL.
 
@@ -81,19 +81,27 @@ After running the model, you can expect the following output:
 + Graphs representing the signal coverage of all facilities and the the signal coverage provided by the optimal solutions saved in the plots directory.
    
    Example: Signal coverage of the facility selection
-   ![Signal coverage of the facility selection](plots/solution_coverage.png)
+   ![Signal coverage of the facility selection](plots/solution_real_data_signal.png)
+
+
 
 + A CSV file reflecting the optimal facility selection  saved at  data/sims directory.
 
 + An incremental table  with the summary of the optimal solutions saved at data/exp_pro/table.txt and data/exp_pro/raw_table.csv. 
 
 
-## Real World Data (see Section 3.1):
+## Simulated Data (see Section 3.2):
 
-Follow the steps of the Simulated Data replacing the command in 1. by :
+Follow the steps of the Real Data replacing the command in 1. by :
 ```
-$julia scripts/model_solvit.jl
+$julia scripts/model_sim.jl
 ```
+
+The output is also similar to the Real Data case:
+
+Example: Signal coverage of the facility selection
+   ![Signal coverage of the facility selection](plots/solution_coverage.png)
+
 
 # Contributing
 
