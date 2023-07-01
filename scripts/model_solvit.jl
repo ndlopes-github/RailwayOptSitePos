@@ -1,5 +1,5 @@
 using DrWatson
-@quickactivate "OptSitePos"
+@quickactivate "RailwayOptSitePos"
 
 using LinearAlgebra
 using DataFrames
@@ -30,7 +30,7 @@ Par = Dict(
   # Minimum allowed length for good signal
   #:LMINg => 0,
   :LMINg => 0.85*162.9025,
-  #:LMINg => 0.88925*162.9025,  
+  #:LMINg => 0.88925*162.9025,
   # For special restrictions (13)
   #if L=0 do not consider these restrictions
   # in every interval of  length L,
