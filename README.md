@@ -81,7 +81,11 @@ After running the model, you can expect the following output:
 + Graphs representing the signal coverage of all facilities and the the signal coverage provided by the optimal solutions saved in the plots directory.
    
    Example: Signal coverage of the facility selection
-   ![Signal coverage of the facility selection](plots/solution_real_data_signal.png)
+
+   ![RX Signal Level of the antennas of the facility selection](plots/solution_real_data_signal.png)
+
+     ![Intervals of fair and good coverage of the facility selection](plots/solution_real_data_projection.png)
+
 
 
 
