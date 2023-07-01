@@ -28,13 +28,13 @@ Par = Dict(
   #:LMAXn => 0.01166*162.9025,
   :LMAXn => 0.1*162.9025,
   # Minimum allowed length for good signal
-  :LMINg => 0,
-  #:LMINg => 0.85*162.9025,
+  #:LMINg => 0,
+  :LMINg => 0.85*162.9025,
   #:LMINg => 0.88925*162.9025,  
   # For special restrictions (13)
   #if L=0 do not consider these restrictions
   # in every interval of  length L,
-  :L => 10.0,
+  :L => 0.0,
   # the lengths of the sections without signal do not sum up more than  LMAXnL.
   :LMAXnL =>1.0,
 
@@ -45,15 +45,15 @@ Par = Dict(
   # Data loader/generator and processing options
   # Functions at PreProcessing.jl
   # ["Solvit", LoadJLD2Data"]
-  #:preprocess => "Solvit",
-  :preprocess => "LoadJLD2Data",
+  :preprocess => "Solvit",
+  #:preprocess => "LoadJLD2Data",
   # Number of antennas
   :nants=>118, #solvit
   #Max number of solutions to search
   :MaxNSol => 20,
 
   # Images Save and Show
-  :ImShow=>false,
+  :ImShow=>true,
   :ImSave=>true
   )
 #@tag!(Par) # DrWatson tag.
@@ -71,7 +71,7 @@ dataproctime = @elapsed begin
       df25 = (datadir("exp_raw","Douro_coverage_25.xlsx"), "Sheet1"), # Dataframe
       df30 = (datadir("exp_raw","Douro_coverage_30.xlsx"), "Sheet1"), # Dataframe
       dfw = (datadir("exp_raw","DouroPriority.xlsx"), "Sheet1"), #Priorities
-      # Options for smoothing:
+      # Options for smoothing: Not Implemented in the public version
       smoothmethod = ("NoSmoothing",),
       saveprefix="raw_")
   # Load all data from pre-saved jld2 files.
