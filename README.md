@@ -110,9 +110,10 @@ Example: Signal coverage of the facility selection
 # Contributing
 
 We welcome contributions to this project! If you find any issues or have suggestions for improvements, please feel free to open an issue or submit a pull request. We appreciate your involvement in making this implementation more robust and accurate.
-License
 
-This project is currently under [choose license] license. Please refer to the LICENSE file for more information.
+# License
+
+This project is currently under MIT license. Please refer to the LICENSE file for more information.
 
 # Contact
 
