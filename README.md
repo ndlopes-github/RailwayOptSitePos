@@ -56,7 +56,7 @@ which auto-activate the project and enable local path handling from DrWatson.
 
 # USAGE
 
-##  Real Data (see Section 3.1):
+##  Real Data (see Section 3.1 of the paper):
 
 ### Running the Model
 
@@ -94,7 +94,7 @@ After running the model, you can expect the following output:
 + An incremental table  with the summary of the optimal solutions saved at data/exp_pro/table.txt and data/exp_pro/raw_table.csv.
 
 
-## Simulated Data (see Section 3.2):
+## Simulated Data (see Section 3.2 of the paper):
 
 Follow the steps of the Real Data replacing the command in 1. by :
 ```
