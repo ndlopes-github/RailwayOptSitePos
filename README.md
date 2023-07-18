@@ -68,7 +68,7 @@ To run the model, follow the steps below:
    ```
    $julia scripts/model_solvit.jl
    ```
-      >   This command executes instance 5 of the model with $LMAX^n=16.2$ and $LMIN^g=138.5$ (see Table 2 for more details).
+      >   This command executes instance 5 of the model with $LMAX^n=16.2$ and $LMIN^g=138.5$ (see Table 2 of the paper for more details).
 
 * Note: The previous command can be replaced by the usage of an IDE such as VSCode or by running the script in the Julia REPL.
 
