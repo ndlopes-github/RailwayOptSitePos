@@ -119,4 +119,7 @@ This project is currently under MIT license. Please refer to the LICENSE file fo
 
 # Contact
 
-If you have any questions or inquiries regarding this codebase or the associated paper, please contact: nuno(dot)lopes(at)isel(dot)pt.
+If you have any questions or inquiries regarding this codebase or the associated paper, please contact: [To appear]
+<!---
+nuno(dot)lopes(at)isel(dot)pt.
+--->
