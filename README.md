@@ -6,13 +6,15 @@ This repository reflects the implementation of an algorithm based on a paper tha
 
    > Title: Minimizing costs in signal provision from communication antennas along a railway line
 
+   > Authors: [To appear]
+<!---
    > Authors: A. Araújo 1, J. O. Cerdeira 2, N. Lopes 3, A. Moura 4
 
    > 1- CMUC, Department of Mathematics, University of Coimbra;
     2- CMA, Department of Mathematics, NOVA University Lisbon;
     3- ISEL, Polytechnic of Lisboa, and CEMAT, University of Lisboa;
     4- ISEP-LEMA, Polytechnic of Porto, and CMUP, University of Porto;
-
+--->
    > Journal: [To appear]
 
    > Publication Date: [To appear]
