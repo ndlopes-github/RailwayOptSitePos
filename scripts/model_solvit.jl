@@ -25,8 +25,8 @@ Par = Dict(
   :b => 0,
   # Maximum allowed length for no signal
   # 0.01166*162.9025 approx 1.90 KM
-  #:LMAXn => 0.01166*162.9025,
-  :LMAXn => 0.1*162.9025,
+  :LMAXn => 0.01166*162.9025,
+  #:LMAXn => 0.1*162.9025,
   # Minimum allowed length for good signal
   #:LMINg => 0,
   :LMINg => 0.85*162.9025,
