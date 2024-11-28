@@ -1,7 +1,7 @@
 #= Copyright (C) 2024
 Nuno David Lopes.
 Created:  2024/10/22
-Last changed - N. Lopes:2024/11/28 13:28:48
+Last changed - N. Lopes:2024/11/28 14:07:41
 =#
 
 using DrWatson
@@ -11,7 +11,7 @@ using Logging
 using LinearAlgebra
 using DataFrames
 using CSV
-using Gurobi
+using Gurobi # Could be replaced by HiGHs: see also lines 150-160 
 using JuMP
 
 logger = ConsoleLogger(stderr, Logging.Info; show_limited=false) #
@@ -63,7 +63,7 @@ Par = Dict(
   :nants => 118, #solvit
 
   #Max number of solutions to search
-  :MaxNSol => 10,
+  :MaxNSol => 20,
 
   # Images Save and Show
   :ImShow => true,
