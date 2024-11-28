@@ -1,6 +1,6 @@
 module Pp
 using DrWatson
-@quickactivate "RailwayOptSitePos"
+@quickactivate "OptSitePos"
 
 using XLSX
 using DataFrames
@@ -10,7 +10,7 @@ using OnlineStats # For Mean and ExponentialWeight
 using SmoothingSplines
 using SavitzkyGolay
 
-export LoadJLD2Data, Solvit,FakeIntervals
+export LoadJLD2Data, Solvit, FakeSites
 
 
 """
@@ -48,14 +48,14 @@ function moving_average(A::AbstractArray, m::Int)
   out = similar(A)
   R = CartesianIndices(A)
   Ifirst, Ilast = first(R), last(R)
-  I1 = m÷2 * oneunit(Ifirst)
+  I1 = m ÷ 2 * oneunit(Ifirst)
   for I in R
-      n, s = 0, zero(eltype(out))
-      for J in max(Ifirst, I-I1):min(Ilast, I+I1)
-          s += A[J]
-          n += 1
-      end
-      out[I] = s/n
+    n, s = 0, zero(eltype(out))
+    for J in max(Ifirst, I - I1):min(Ilast, I + I1)
+      s += A[J]
+      n += 1
+    end
+    out[I] = s / n
   end
   return out
 end
@@ -125,8 +125,8 @@ function smooth!(M; smoothmethod=("ExponentialWeight", 0.1))
       M[:, column] = predict(spl) # fitted vector
     elseif smoothmethod[1] == "SavitzkyGolay"
       y = M[:, column]
-      sg = savitzky_golay(y, smoothmethod[2][1],smoothmethod[2][2])
-      M[:,column] = sg.y
+      sg = savitzky_golay(y, smoothmethod[2][1], smoothmethod[2][2])
+      M[:, column] = sg.y
     elseif smoothmethod[1] == "NoSmoothing"
     else
       error(">>>>>>>>>>> Smoothing Method not defined.\n
@@ -285,8 +285,8 @@ function Solvit(Par; df25, df30, dfw,
   end
 
   if save == true
-  wsave(datadir("exp_pro", saveprefix*"cjMSEnm.jld2"),
-    Dict("cj" => cj, "M" => M, "SE" => SE, "nm" => nm))
+    wsave(datadir("exp_pro", saveprefix * "cjMSEnm.jld2"),
+      Dict("cj" => cj, "M" => M, "SE" => SE, "nm" => nm))
   end
   println(">>>>>>>>>>> Smoothing method = ", smoothmethod)
   cj, SE, M, nm
@@ -328,11 +328,11 @@ julia> k = 1
 julia> j = 2
 julia> Mconstructor!(M, SEs, Atypes, types, Par, Npoints, k, j)
 """
-function Mconstructor!(M,SEs,Atypes,types,Par,Npoints,k,j)
+function Mconstructor!(M, SEs, Atypes, types, Par, Npoints, k, j)
   for p ∈ 1:Npoints
     if SEs[k, 1] ≤ M[p, 1] ≤ SEs[k, 2]
       if Int(SEs[k, 3]) == 1
-        M[p, j+1] = Par[:cll] + 0.75*(Atypes[types[j], 3]/Atypes[end, 3])*(Par[:clh]-Par[:cll])
+        M[p, j+1] = Par[:cll] + 0.75 * (Atypes[types[j], 3] / Atypes[end, 3]) * (Par[:clh] - Par[:cll])
       elseif Int(SEs[k, 3]) == 2
         M[p, j+1] = Par[:clh] + Atypes[types[j], 3]
       else
@@ -343,266 +343,125 @@ function Mconstructor!(M,SEs,Atypes,types,Par,Npoints,k,j)
 end
 
 
-"""
-DEPRECATED
-"""
-function FakeIntervals(Par;
-  StartPoint=0.0, # Starting Point in Km
-  EndPoint=500.0, # Ending Point in Km
-  Npoints=50000,
-  PrioritiesList=1:10, #Priorities from 1 to 10
-  Atypes=[10.0 5.0 25.0; 20.0 7.5 45.0; 35.0 10.0 75.0; 40.0 15.0 100.0], # Fair range Good range Height
-  #Atypes = [1.0 0.5 25.0; 2.0 0.75 45.0; 3.5 1.0 75.0; 4.0 1.5 100.0], #Types of intervals
-  NFairIs=6,
-  NGoodIs=3,
-  seed=1123,
-  save= true,
-  saveprefix="FInt_"
-)
-
-  if seed > 0
-    Random.seed!(seed)
-  end
-  Nant = Par[:nants]
-  nm = ["A$(i)" for i ∈ 1:Nant]
-  Δ = (EndPoint - StartPoint) / (Npoints - 1)
-
-
-  types = [rand(1:size(Atypes, 1)) for i ∈ 1:Nant]
-
-  #Factor for cj
-  Priorities = rand(PrioritiesList, Nant)
-  Factors = ones(Nant)
-
-  for i ∈ 1:Nant
-    Factors[i] = Atypes[types[i], 3] / (size(Atypes, 1) * minimum(Atypes[:, 3]))
-  end
-
-  # Costs are defined by the priorities and by the types of antennas
-
-  cj = hcat(nm, Factors .* Priorities)
-
-
-  M = (Par[:cll] - 20.0) * ones((Npoints, Nant + 1))
-  M[:, 1] = [(StartPoint + (i - 1) * Δ) for i ∈ 1:Npoints]
-  SE = Array{Any}(undef, 0, 4) # [km antena number g(2)/f(1) s(1)/e(0)]
-
-  for j ∈ 1:Nant
-    SP = StartPoint
-    EP = EndPoint
-    Nfis = rand(1:NFairIs)
-    Ngis = rand(0:NGoodIs)
-    Nis = Nfis + Ngis
-    SEs = zeros(Nis, 3)
-    fgs = shuffle(hcat(ones(Int, Nfis)', 2 * ones(Int, Ngis)'))
-
-    centers = zeros(Nis)
-    centers .= StartPoint .+ rand(Uniform(0, 1), Nis) .* (EndPoint - StartPoint)
-    sort!(centers)
-
-    for (ifg, fg) ∈ enumerate(fgs)
-      s = centers[ifg] - rand(Uniform(0.5, 1))*Atypes[types[j], fg] / 2.0
-      e = centers[ifg] + rand(Uniform(0.5, 1))*Atypes[types[j], fg] / 2.0
-      if e ≥ EP
-        e = EP
-      end
-      if s ≤ SP
-        s = SP
-      end
-      if s ≥ e
-        e=s # This interval will not be considered in the partition
-      end
-
-      SEs[ifg, :] = [s e fg]
-      SP = e
-    end
-
-    for k ∈ 1:Nis
-      # Discard degenerate intervals with s >= e
-      if SEs[k, 1] ≥ SEs[k, 2]
-        continue
-      end
-
-      SE = vcat(SE, [SEs[k, 1] j SEs[k, 3] 1])
-      SE = vcat(SE, [SEs[k, 2] j SEs[k, 3] 0])
-
-      for p ∈ 1:Npoints
-        if SEs[k, 1] ≤ M[p, 1] ≤ SEs[k, 2]
-          if Int(SEs[k, 3]) == 1
-            M[p, j+1] = (Par[:cll] + Par[:clh]) / 2.0
-          elseif Int(SEs[k, 3]) == 2
-            M[p, j+1] = Par[:clh] + Atypes[types[j], 3]
-          end
-        end
-      end
-    end
-  end
-
-
-  if save == true
-  wsave(datadir("exp_pro", saveprefix*"cjMSEnm.jld2"),
-        Dict("cj"=> cj,"M"=>M,"SE"=> SE,"nm"=> nm))
-  end
-
-  cj, SE, M, nm
-
-end
-
-
 
 function FakeSites(Par;
   StartPoint=0.0, # Starting Point in Km
   EndPoint=500.0, # Ending Point in Km
   Npoints=50000,
   PrioritiesList=1:3, #Priorities from 1 to 10
-  Atypes=[10.0 6.0 25.0; 12.0 8.0 30.0], # Fair range Good range Height
+  Atypes=[15.0 10.0 25.0; 18.0 12.0 30.0],#[10.0 6.0 25.0; 12.0 8.0 30.0], # Fair range Good range Height
   NFairIs=6,
   NGoodIs=3,
-  seed=1123,
-  save=true,
-  saveprefix="FSInt_")
+  save=true)
 
-  if seed > 0
-    Random.seed!(seed)
-  end
+  mcs = 2 * EndPoint # Large value to start
+  mcs_counter = 0
+  seed = Par[:seed]
+  
+  while mcs > Par[:mcs] && mcs_counter < 60
 
-  Nant = Par[:nants]
-  Ntypes = size(Atypes, 1)
-
-  @assert(Ntypes == 2, "Factors for costs defined as in real data, 2 types of Antennas only")
-  @assert(Nant % Ntypes == 0, "Number of antennas != number of sites x number of types")
-
-  Nsites = Nant ÷ Ntypes
-
-  # In each site we may install one of each type of antenna
-  # Example: [1 1 1 ...2 2 2 ...]
-  types = [i for j in 1:Nsites for i ∈ 1:Ntypes]
-
-  #println(types)
-
-  nm = ["A$(j),$(i)" for j in 1:Nsites for i ∈ 1:Ntypes]
-  Δ = (EndPoint - StartPoint) / (Npoints - 1)
-
-  #Factor for cj
-  Priorities_aux = rand(PrioritiesList, Nsites)
-  Priorities = [p for p in Priorities_aux for i in 1:Ntypes]
-
-  #println(Priorities)
-  Factors = ones(Nant)
-
-  # The cost factors may be redefined here
-  for i ∈ 1:Nant
-    # Define as in the Real Data
-    # Type 1 => Factor = 1
-    # Type 2 => Factor = 1.2
-    Factors[i] = (types[i] == 1 ? 1.0 : 1.2 )
-  end
-  # Costs are defined by the priorities and by the types of antennas
-  cj = hcat(nm, Factors .* Priorities)
-
-  if Par[:ImShow] == false && Par[:ImSave] == false
-    M = nothing
-    println(">>>>>>>>>> Skip M construction (No Plots options)")
-  else
-    M = (Par[:cll] - 20.0) * ones((Npoints, Nant + 1))
-    M[:, 1] = [(StartPoint + (i - 1) * Δ) for i ∈ 1:Npoints]
-  end
-
-  SE = Array{Any}(undef, 0, 4) # [km antena number g(2)/f(1) s(1)/e(0)]
-
-  # Define site location for all antennas
-  # each site has Ntypes of antennas
-  locations = zeros(Nsites)
-  locations .= StartPoint .+ rand(Uniform(0, 1), Nsites) .* (EndPoint - StartPoint)
-
-  for tp ∈ 1:Nsites
-    Nfis = rand(1:NFairIs)
-    Ngis = rand(1:NGoodIs)
-    Nis = Nfis + Ngis
-    centers = zeros(Nis)
-
-
-    LocSP = locations[tp] - Atypes[end, 1] / 2.0 #maximum ranges for all types
-    LocSP = (LocSP < StartPoint ? StartPoint : LocSP)
-
-    LocEP = locations[tp] + Atypes[end, 1] / 2.0
-    LocEP = (LocEP > EndPoint ? EndPoint : LocEP)
-
-    centers .= LocSP .+ rand(Uniform(0, 1), Nis) .* (LocEP - LocSP)
-    sort!(centers)
-
-    fgs = shuffle(hcat(ones(Int, Nfis)', 2 * ones(Int, Ngis)'))
-
-    LRndMargin = rand(Uniform(0.7, 1.2), Nis)
-    RRndMargin = rand(Uniform(0.7, 1.2), Nis)
-
-    s_s = zeros(Nis, Ntypes, Nsites)
-    e_s = zeros(Nis, Ntypes, Nsites)
-    SEs = Array{Any}(undef, 0, 3) #zeros(Nis,3)
-    ## Larger Reference intervals
-    i = Ntypes
-    j = tp + (Ntypes - 1) * Nsites
-    #println("Antena=", j)
-    for (ifg, fg) ∈ enumerate(fgs)
-      Ni = (fg == 1 ? Nfis : Ngis)
-      s_s[ifg, i, tp] = centers[ifg] - LRndMargin[ifg] * Atypes[end, fg] / (Ni * 2.0)
-      e_s[ifg, i, tp] = centers[ifg] + RRndMargin[ifg] * Atypes[end, fg] / (Ni * 2.0)
-    end
-    SP = StartPoint
-    EP = EndPoint
-
-    for (ifg, fg) ∈ enumerate(fgs)
-      if e_s[ifg, i, tp] ≥ EP
-        e_s[ifg, i, tp] = EP
-      end
-      if s_s[ifg, i, tp] ≤ SP
-        s_s[ifg, i, tp] = SP
-      end
-      if s_s[ifg, i, tp] ≥ e_s[ifg, i, tp]
-        e_s[ifg, i, tp] = s_s[ifg, i, tp]
-      end # This interval will not be considered in the partition
-      SEs = vcat(SEs, [s_s[ifg, i, tp] e_s[ifg, i, tp] fg])
-      #println(SEs[ifg, :])
-      SP = e_s[ifg, i, tp]
+    if seed > 0
+      Random.seed!(seed)
     end
 
-    #println("Size SEs=", size(SEs, 1))
-    for k ∈ 1:size(SEs, 1)
-      if M != nothing
-        Mconstructor!(M, SEs, Atypes, types, Par, Npoints, k, j)
-      end
-      if SEs[k, 1] ≥ SEs[k, 2]
-        #println("Discard SEs=", SEs[k, :])
-        continue
-      end # Discard degenerate intervals with s >= e
-      SE = vcat(SE, [SEs[k, 1] j SEs[k, 3] 1])
-      SE = vcat(SE, [SEs[k, 2] j SEs[k, 3] 0])
+    Nant = Par[:nants]
+    Ntypes = size(Atypes, 1)
+
+    @assert(Ntypes == 2, "Factors for costs defined as in real data, 2 types of Antennas only")
+    @assert(Nant % Ntypes == 0, "Number of antennas != number of sites x number of types")
+
+    Nsites = Nant ÷ Ntypes
+
+    # In each site we may install one of each type of antenna
+    # Example: [1 1 1 ...2 2 2 ...]
+    types = [i for j in 1:Nsites for i ∈ 1:Ntypes]
+
+    #println(types)
+
+    global nm = ["A$(j),$(i)" for j in 1:Nsites for i ∈ 1:Ntypes]
+    Δ = (EndPoint - StartPoint) / (Npoints - 1)
+
+    #Factor for cj
+    Priorities_aux = rand(PrioritiesList, Nsites)
+    Priorities = [p for p in Priorities_aux for i in 1:Ntypes]
+
+    #println(Priorities)
+    Factors = ones(Nant)
+
+    # The cost factors may be redefined here
+    for i ∈ 1:Nant
+      # Define as in the Real Data
+      # Type 1 => Factor = 1
+      # Type 2 => Factor = 1.2
+      Factors[i] = (types[i] == 1 ? 1.0 : 1.2)
+    end
+    # Costs are defined by the priorities and by the types of antennas
+    global cj = hcat(nm, Factors .* Priorities)
+
+    if Par[:ImShow] == false && Par[:ImSave] == false
+     global M = nothing
+      println(">>>>>>>>>> Skip M construction (No Plots options)")
+    else
+      global M = (Par[:cll] - 20.0) * ones((Npoints, Nant + 1))
+      M[:, 1] = [(StartPoint + (i - 1) * Δ) for i ∈ 1:Npoints]
     end
 
-    for i ∈ reverse(1:Ntypes-1)
-      #SEs=zeros(Nis,3)
-      SEs = Array{Any}(undef, 0, 3)
-      j = tp + (i - 1) * Nsites
+    global SE = Array{Any}(undef, 0, 4) # [km antena number g(2)/f(1) s(1)/e(0)]
+
+    # Define site location for all antennas
+    # each site has Ntypes of antennas
+    locations = zeros(Nsites)
+    locations .= StartPoint .+ rand(Uniform(0, 1), Nsites) .* (EndPoint - StartPoint)
+
+    for tp ∈ 1:Nsites
+      Nfis = rand(1:NFairIs)
+      Ngis = rand(1:NGoodIs)
+      Nis = Nfis + Ngis
+      centers = zeros(Nis)
+
+
+      LocSP = locations[tp] - Atypes[end, 1] / 2.0 #maximum ranges for all types
+      LocSP = (LocSP < StartPoint ? StartPoint : LocSP)
+
+      LocEP = locations[tp] + Atypes[end, 1] / 2.0
+      LocEP = (LocEP > EndPoint ? EndPoint : LocEP)
+
+      centers .= LocSP .+ rand(Uniform(0, 1), Nis) .* (LocEP - LocSP)
+      sort!(centers)
+
+      fgs = shuffle(hcat(ones(Int, Nfis)', 2 * ones(Int, Ngis)'))
+
+      LRndMargin = rand(Uniform(0.7, 1.2), Nis)
+      RRndMargin = rand(Uniform(0.7, 1.2), Nis)
+
+      s_s = zeros(Nis, Ntypes, Nsites)
+      e_s = zeros(Nis, Ntypes, Nsites)
+      SEs = Array{Any}(undef, 0, 3) #zeros(Nis,3)
+      ## Larger Reference intervals
+      i = Ntypes
+      j = tp + (Ntypes - 1) * Nsites
       #println("Antena=", j)
       for (ifg, fg) ∈ enumerate(fgs)
-        ###############################################
-        # Just need to fine tune the following two lines
-        ###############################################
-        intlen = (e_s[ifg, i+1, tp] - s_s[ifg, i+1, tp])
-        s_s[ifg, i, tp] = s_s[ifg, i+1, tp] + rand(Uniform(0.3, 0.5)) * (1.0 - Atypes[i, fg] / Atypes[end, fg]) * intlen
-        e_s[ifg, i, tp] = s_s[ifg, i+1, tp] + rand(Uniform(0.3, 0.5)) * (1.0 + Atypes[i, fg] / Atypes[end, fg]) * intlen
+        Ni = (fg == 1 ? Nfis : Ngis)
+        s_s[ifg, i, tp] = centers[ifg] - LRndMargin[ifg] * Atypes[end, fg] / (Ni * 2.0)
+        e_s[ifg, i, tp] = centers[ifg] + RRndMargin[ifg] * Atypes[end, fg] / (Ni * 2.0)
+      end
+      SP = StartPoint
+      EP = EndPoint
 
-        if s_s[ifg, i, tp] ≥ e_s[ifg, i, tp] # Useless?
-          e_s[ifg, i, tp] = s_s[ifg, i, tp] # This interval will not be considered in the partition
+      for (ifg, fg) ∈ enumerate(fgs)
+        if e_s[ifg, i, tp] ≥ EP
+          e_s[ifg, i, tp] = EP
         end
-
-        fgaux = 1
-        if fg == 2
-          fgaux = rand(1:2)
+        if s_s[ifg, i, tp] ≤ SP
+          s_s[ifg, i, tp] = SP
         end
-
-        SEs = vcat(SEs, [s_s[ifg, i, tp] e_s[ifg, i, tp] fgaux])
+        if s_s[ifg, i, tp] ≥ e_s[ifg, i, tp]
+          e_s[ifg, i, tp] = s_s[ifg, i, tp]
+        end # This interval will not be considered in the partition
+        SEs = vcat(SEs, [s_s[ifg, i, tp] e_s[ifg, i, tp] fg])
         #println(SEs[ifg, :])
+        SP = e_s[ifg, i, tp]
       end
 
       #println("Size SEs=", size(SEs, 1))
@@ -617,12 +476,79 @@ function FakeSites(Par;
         SE = vcat(SE, [SEs[k, 1] j SEs[k, 3] 1])
         SE = vcat(SE, [SEs[k, 2] j SEs[k, 3] 0])
       end
+
+      for i ∈ reverse(1:Ntypes-1)
+        #SEs=zeros(Nis,3)
+        SEs = Array{Any}(undef, 0, 3)
+        j = tp + (i - 1) * Nsites
+        #println("Antena=", j)
+        for (ifg, fg) ∈ enumerate(fgs)
+          ###############################################
+          # Just need to fine tune the following two lines
+          ###############################################
+          intlen = (e_s[ifg, i+1, tp] - s_s[ifg, i+1, tp])
+          s_s[ifg, i, tp] = s_s[ifg, i+1, tp] + rand(Uniform(0.3, 0.5)) * (1.0 - Atypes[i, fg] / Atypes[end, fg]) * intlen
+          e_s[ifg, i, tp] = s_s[ifg, i+1, tp] + rand(Uniform(0.3, 0.5)) * (1.0 + Atypes[i, fg] / Atypes[end, fg]) * intlen
+
+          if s_s[ifg, i, tp] ≥ e_s[ifg, i, tp] # Useless?
+            e_s[ifg, i, tp] = s_s[ifg, i, tp] # This interval will not be considered in the partition
+          end
+
+          fgaux = 1
+          if fg == 2
+            fgaux = rand(1:2)
+          end
+
+          SEs = vcat(SEs, [s_s[ifg, i, tp] e_s[ifg, i, tp] fgaux])
+          #println(SEs[ifg, :])
+        end
+
+        #println("Size SEs=", size(SEs, 1))
+        for k ∈ 1:size(SEs, 1)
+          if M != nothing
+            Mconstructor!(M, SEs, Atypes, types, Par, Npoints, k, j)
+          end
+          if SEs[k, 1] ≥ SEs[k, 2]
+            #println("Discard SEs=", SEs[k, :])
+            continue
+          end # Discard degenerate intervals with s >= e
+          SE = vcat(SE, [SEs[k, 1] j SEs[k, 3] 1])
+          SE = vcat(SE, [SEs[k, 2] j SEs[k, 3] 0])
+        end
+      end
     end
+
+
+    @info ">>>>>>>>>> Partition:"
+    SE = SE[sortperm(SE[:, 1]), :]
+    counter = copy(SE[:, 4])
+    counter .= ifelse.(counter .> 0, 1, -1)
+    lngths = zeros(size(SE, 1))
+    lngths[1:end-1] .= SE[2:end, 1] .- SE[1:end-1, 1]
+    cumsum!(counter, counter)
+    SE = hcat(SE, counter)
+    SE = hcat(SE, lngths)
+    #@info "Sample of SE" SE[1:10] #show(stdout, "text/plain",SE)
+    println("")
+    nosigns = SE[SE[:, 5].==0, 6]
+    @info "Sum of nosign lenths" sum(nosigns)
+
+    mcs = maximum(nosigns)
+    @info "Maximum of nosigns length" mcs
+    seed+=10
+    mcs_counter+=1
+
+    @info "Instance" Par[:nants] Par[:seed] mcs_counter 
   end
 
 
   if save == true
-    wsave(datadir("exp_pro", saveprefix * "cjMSEnm.jld2"),
+    nants = Par[:nants]
+    seed = Par[:seed]
+    mcs = Par[:mcs]
+    pdict = @strdict nants seed mcs NFairIs NGoodIs
+    savefilename = savename("cjMSEnm_sim", pdict, "jld2")
+    wsave(datadir("exp_pro", savefilename),
       Dict("cj" => cj, "M" => M, "SE" => SE, "nm" => nm))
   end
 
@@ -632,7 +558,7 @@ end
 
 
 """
-LoadJLD2Data(Par; loadprefix="")
+LoadJLD2Data(Par; filename="")
 
 Load data stored in a JLD2 file,
 returning the costs coefficients`cj`,
@@ -652,25 +578,24 @@ Returns:
 
 Examples:
 julia> Par = Dict(:clh => -80, :cll => -95, ........)
-julia> cj, SE, M, nm = LoadJLD2Data(Par, loadprefix="prefix_")
+julia> cj, SE, M, nm = LoadJLD2Data(Par, filename="foo.jld2")
 """
-function LoadJLD2Data(Par; loadprefix="")
-  dDict = wload(datadir("exp_pro", loadprefix*"cjMSEnm.jld2"))
+function LoadJLD2Data(Par; filename="")
+  dDict = wload(datadir("exp_pro", filename))
   cj = dDict["cj"]
   M = dDict["M"]
   SE = dDict["SE"]
   nm = dDict["nm"]
 
-
   # Print some data info
-  println(">>>>>>>>>> ")
-  println("Railway begin=", M[1,1])
-  println("Railway end=", M[end,1])
-  println("Railway length=", M[end,1]-M[1,1])
-  println("Costs informations=", cj)
-  println("Base station location and Ids=", nm)
-  println(" LoadJLD2Data end")
-  println(">>>>>>>>>> ")
+  if !(Par[:ImShow] == false && Par[:ImSave] == false)
+    @info "Railway begin=" M[1, 1]
+    @info "Railway end=" M[end, 1]
+    @info "Railway length=" M[end, 1] - M[1, 1]
+  end
+
+  @info "Costs informations=" cj
+  @info ">>>>>>>>>> LoadJLD2Data end"
   cj, SE, M, nm
 end
 
@@ -705,23 +630,23 @@ julia> find_consecutive_integers(arr)
  [5, 6, 7]
  This was generated with ChatGPT
 """
-function find_consecutive_integers(arr::AbstractVector{T}) where T<:Integer
+function find_consecutive_integers(arr::AbstractVector{T}) where {T<:Integer}
   consecutive_integers = Vector{T}[]
   n = length(arr)
   i = 1
   while i <= n
-      # Find the starting index of a sequence of consecutive integers
-      start_index = i
-      while i < n && arr[i+1] == arr[i] + 1
-          i += 1
-      end
-      # If a sequence of consecutive integers is found, add it to the result
-      # Single indexes are also considered
-      if start_index ≤ i
-          push!(consecutive_integers, arr[start_index:i])
-      end
-
+    # Find the starting index of a sequence of consecutive integers
+    start_index = i
+    while i < n && arr[i+1] == arr[i] + 1
       i += 1
+    end
+    # If a sequence of consecutive integers is found, add it to the result
+    # Single indexes are also considered
+    if start_index ≤ i
+      push!(consecutive_integers, arr[start_index:i])
+    end
+
+    i += 1
   end
 
   return consecutive_integers

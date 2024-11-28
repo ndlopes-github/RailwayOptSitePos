@@ -1,6 +1,6 @@
 module PltFs
 using DrWatson
-@quickactivate "RailwayOptSitePos"
+@quickactivate "OptSitePos"
 
 using Plots
 using Dates
@@ -16,7 +16,7 @@ function projection_plotter(M, config, weigths, params, flname;show=false,save=t
    return 0
   end
 
-  p = plot(size=(1600, 600), dpi=DPI, leftmargin=10Plots.mm, bottommargin=15Plots.mm,
+  p = plot(size=(1600, 1000), dpi=DPI, leftmargin=10Plots.mm, bottommargin=15Plots.mm,
   tickfontsize=14,xguidefontsize=16,yguidefontsize=16,grid=false)
   for i ∈ eachindex(config)
     if config[i] > 0
