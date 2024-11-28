@@ -1,7 +1,7 @@
 #= Copyright (C) 2024
 Nuno David Lopes.
 Created:  2024/10/22
-Last changed - N. Lopes:2024/11/28 09:44:33
+Last changed - N. Lopes:2024/11/28 13:28:48
 =#
 
 using DrWatson
@@ -45,7 +45,8 @@ Par = Dict(
   # For restrictions (13)
   #if L=0 do not consider these restrictions
   # in every interval of  length L,
-  :L => 5.0,
+  :L => 0,
+  #:L => 5.0,
   # the lengths of the sections without signal do not sum up more than  LMAXnL.
   :LMAXnL => 1.0, 
 
