@@ -1,18 +1,19 @@
 #= Copyright (C) 2024
 Nuno David Lopes.
 Created:  2024/10/22
-Last changed - N. Lopes:2024/11/28 14:07:41
+Last changed - N. Lopes:2024/12/04 16:25:03
 =#
 
 using DrWatson
-@quickactivate "RailwayOptSitePos"
+@quickactivate "OptSitePos"
 
 using Logging
 using LinearAlgebra
 using DataFrames
 using CSV
-using Gurobi # Could be replaced by HiGHs: see also lines 150-160 
+using Gurobi
 using JuMP
+using SparseArrays
 
 logger = ConsoleLogger(stderr, Logging.Info; show_limited=false) #
 global_logger(logger)
@@ -36,16 +37,16 @@ Par = Dict(
   :b => 0,
   # Maximum allowed length for no signal
   # 0.01166*162.9025 approx 1.90 KM
-  #:LMAXn => 0.01166*162.9025,
-  :LMAXn => 0.1 * 162.9025,
+  :LMAXn => 0.01166*162.9025,
+  #:LMAXn => 0.1 * 162.9025,
   # Minimum allowed length for good signal
   :LMINg => 0,
   #:LMINg => 0.85*162.9025,
   #:LMINg => 0.88925 * 162.9025,
   # For restrictions (13)
-  #if L=0 do not consider these restrictions
+  # if L=0 do not consider these restrictions
   # in every interval of  length L,
-  :L => 0,
+  :L=>0,
   #:L => 5.0,
   # the lengths of the sections without signal do not sum up more than  LMAXnL.
   :LMAXnL => 1.0, 
@@ -190,7 +191,7 @@ optconsttime = @elapsed begin
   end
 
   # Model constraint (2)
-  Ag = zeros(Int, (m, Par[:nants])) # a_ij if antenna j is on in interval i (central antennas)
+  Ag = spzeros(Int, (m, Par[:nants])) # a_ij if antenna j is on in interval i (central antennas)
   build_A!(Ag, SE, Ip, 2)
 
   for i ∈ 1:m
@@ -207,7 +208,7 @@ optconsttime = @elapsed begin
   end
 
   # Model constraint (4)
-  Af = zeros(Int, (m, Par[:nants])) # a_ij if antenna j is on in interval i (central antennas)
+  Af = spzeros(Int, (m, Par[:nants])) # a_ij if antenna j is on in interval i (central antennas)
   build_A!(Af, SE, Ip, 1)
 
 

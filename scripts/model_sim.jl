@@ -1,11 +1,11 @@
 #= Copyright (C) 2024
 Nuno David Lopes.
 Created:  2024/10/22
-Last changed - N. Lopes:2024/11/28 09:54:44
+Last changed - N. Lopes:2024/12/04 16:39:43
 =#
 
 using DrWatson
-@quickactivate "RailwayOptSitePos"
+@quickactivate "OptSitePos"
 
 using Logging
 using DataFrames
@@ -13,6 +13,7 @@ using CSV
 using Dates
 using Gurobi
 using JuMP
+using SparseArrays
 
 @info "This script should be called with loopsims.sh"
 @info "Input data should be generated with simsdatagen.sh "
@@ -68,8 +69,8 @@ for ns ∈ NS, is ∈ IS
         # For special restrictions (13)
         #if L=0 do not consider these restrictions
         # in every interval of  length L,
-        #:L => 20.0,
-        :L => 0,
+        :L => 20.0,
+        #:L => 0,
         # the lengths of the sections without signal do not sum up more than  LMAXnL.
         :LMAXnL => 15.0,
 
@@ -184,7 +185,7 @@ for ns ∈ NS, is ∈ IS
         end
 
         # Model constraint (2)
-        Ag = zeros(Int, (m, Par[:nants])) # a_ij if antenna j is on in interval i (central antennas)
+        Ag = spzeros(Int, (m, Par[:nants])) # a_ij if antenna j is on in interval i (central antennas)
         build_A!(Ag, SE, Ip, 2)
 
         for i ∈ 1:m
@@ -201,7 +202,7 @@ for ns ∈ NS, is ∈ IS
         end
 
         # Model constraint (4)
-        Af = zeros(Int, (m, Par[:nants])) # a_ij if antenna j is on in interval i (central antennas)
+        Af = spzeros(Int, (m, Par[:nants])) # a_ij if antenna j is on in interval i (central antennas)
         build_A!(Af, SE, Ip, 1)
 
 
