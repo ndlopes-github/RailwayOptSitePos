@@ -1,7 +1,7 @@
 #= Copyright (C) 2024
 Nuno David Lopes.
 Created:  2024/10/22
-Last changed - N. Lopes:2024/12/04 16:25:03
+Last changed - N. Lopes:2024/12/09 13:38:51
 =#
 
 using DrWatson
@@ -166,7 +166,7 @@ optconsttime = @elapsed begin
   unregister(model, :yn)
 
 
-  # Integer Variables
+  @info "Integer Variables: constraints (11) and (12)"
   @variable(model, 0 ≤ x[1:Par[:nants]] ≤ 1, Int)
   @variable(model, 0 ≤ yg[1:m] ≤ 1, Int) 
   @variable(model, 0 ≤ yf[1:m] ≤ 1, Int)
@@ -190,7 +190,7 @@ optconsttime = @elapsed begin
     end
   end
 
-  # Model constraint (2)
+  @info "Model constraint (2)"
   Ag = spzeros(Int, (m, Par[:nants])) # a_ij if antenna j is on in interval i (central antennas)
   build_A!(Ag, SE, Ip, 2)
 
@@ -202,7 +202,7 @@ optconsttime = @elapsed begin
     end
   end
 
-  # Model constraint (3)
+  @info "Model constraint (3)"
   for i ∈ 1:m
     @constraint(model, yg[i] ≤ sum(x[j] * Ag[i, j] for j ∈ 1:Par[:nants]))
   end
@@ -220,37 +220,37 @@ optconsttime = @elapsed begin
     end
   end
 
-  # Model constraint (5)
+  @info "Model constraint (5)"
   for i ∈ 1:m
     @constraint(model, yf[i] ≤ sum(x[j] * Af[i, j] for j ∈ 1:Par[:nants]))
   end
 
 
-  # Model constraint (6)
+  @info "Model constraint (6)"
   for i ∈ 1:m
     @constraint(model, yg[i] + yf[i] + yn[i] ≥ 1)
   end
 
 
-  # Model constraint (7)
+  @info "Model constraint (7)"
   for i ∈ 1:m
     @constraint(model, yg[i] + yn[i] ≤ 1)
   end
 
-  # Model constraint (8)
+  @info "Model constraint (8)"
   for i ∈ 1:m
     @constraint(model, yf[i] + yn[i] ≤ 1)
   end
 
 
-  # Model constraint (9)
+  @info "Model constraint (9)"
   @constraint(model, sum(L[i] * yg[i] for i ∈ 1:m) ≥ Par[:LMINg])
 
-  # Model constraint (10)
+  @info "Model constraint (10)"
   @constraint(model, sum(L[i] * yn[i] for i ∈ 1:m) ≤ Par[:LMAXn])
 
 
-  # Model constraint (13) 
+  @info "Model constraint (13)" 
   if Par[:L] > 0
     local k = 1
     local SL = L[k]
@@ -269,19 +269,19 @@ optconsttime = @elapsed begin
         end
         i = k
         @constraint(model, sum(L[k] * yn[k] for k ∈ i:iL) ≤ Par[:LMAXnL])
-        k = k + 1
+        k = iL + 1 # should be k = k + 1 -> infinite loop
         SL = SL - L[i] + L[k]
       end
     end
     deleteat!(L, length(L)) 
   end
 
-  # Model constraints Anchors
+  @info "Model constraints Anchors"
   for j ∈ Par[:Ach]
     @constraint(model, x[j] == 1.0)
   end
 
-  # Model constraints number of antennas
+  @info "Model constraints number of antennas"
   if Par[:b] != 0
     @constraint(model, sum(x[j] for j ∈ eachindex(x)) == Par[:b])
   end

@@ -1,13 +1,13 @@
 #= Copyright (C) 2024
 Nuno David Lopes.
 Created:  2024/10/22
-Last changed - N. Lopes:2024/12/04 16:39:43
+Last changed - N. Lopes:2024/12/09 13:40:02
 =#
 
 using DrWatson
 @quickactivate "OptSitePos"
 
-using Logging
+using LoggingExtras
 using DataFrames
 using CSV
 using Dates
@@ -19,13 +19,13 @@ using SparseArrays
 @info "Input data should be generated with simsdatagen.sh "
 
 # Set the Input data directory and file prefix
-set_dir="sim_set4_2to14_mcs_15_NFair_6_NGood_3/"
-file_prefix="cjMSEnm_sim_NFairIs=6_NGoodIs=3_mcs=15.0"
+set_dir = "sim_set4_2to14_mcs_15_NFair_6_NGood_3/"
+file_prefix = "cjMSEnm_sim_NFairIs=6_NGoodIs=3_mcs=15.0"
 
 # Set the output log to file
-io = open(datadir("sims/paper_table", "logfile_model.txt"), "a")
-logger = ConsoleLogger(io, Logging.Info; show_limited=true)
+logger = ConsoleLogger(stderr, Logging.Info; show_limited=false)
 global_logger(logger)
+
 
 include(srcdir("DataPp.jl"))
 include(srcdir("Plts.jl"))
@@ -35,10 +35,10 @@ import .Pp as pp
 import .PltFs as pf
 
 # INSTANCES 
-Instance_I = parse(Int,ARGS[1])
-Instance_J = parse(Int,ARGS[2])
-NS = [2^(Instance_I+3)] 
-IS = [Instance_J] 
+Instance_I = parse(Int, ARGS[1])
+Instance_J = parse(Int, ARGS[2])
+NS = [2^(Instance_I + 3)]
+IS = [Instance_J]
 
 for ns ∈ NS, is ∈ IS
 
@@ -46,7 +46,7 @@ for ns ∈ NS, is ∈ IS
     instance_dict = @strdict ns is
 
     Scale = Int(ns * 2^(-3))
-    Filename = set_dir*"/"*file_prefix*"_nants=$(ns)_seed=$(is).jld2"
+    Filename = set_dir * "/" * file_prefix * "_nants=$(ns)_seed=$(is).jld2"
     Nsites = Scale * 4
     Length = Nsites * 4
     ################################################
@@ -87,7 +87,7 @@ for ns ∈ NS, is ∈ IS
         # Images Save and Show
         :ImShow => false,
         :ImSave => false,
-        )
+    )
 
     @info Par
 
@@ -148,7 +148,7 @@ for ns ∈ NS, is ∈ IS
         @info ">>>>>>>>>> Maximum interval L[i] is" maxL
         @info ">>>>>>>>>> Minimum interval L[i] is" minL
 
-
+        @info "Setting Gurobi Optimizer "
         model = Model(Gurobi.Optimizer)
 
         set_string_names_on_creation(model, false)
@@ -160,14 +160,14 @@ for ns ∈ NS, is ∈ IS
         unregister(model, :yn)
 
 
-        # Integer Variables
+        @info "Integer Variables: constraints (11) and (12)"
         @variable(model, 0 ≤ x[1:Par[:nants]] ≤ 1, Int)
         @variable(model, 0 ≤ yg[1:m] ≤ 1, Int)
         @variable(model, 0 ≤ yf[1:m] ≤ 1, Int)
         @variable(model, 0 ≤ yn[1:m] ≤ 1, Int)
 
 
-        # Objective function (2.1)
+        @info "Objective function (2.1)"
         @objective(model, Min, sum((c[j, 2]) * x[j] for j ∈ eachindex(x)))
 
         # Define and build matrix required for setting the constraints (A)
@@ -184,7 +184,7 @@ for ns ∈ NS, is ∈ IS
             end
         end
 
-        # Model constraint (2)
+        @info "Model constraint (2)"
         Ag = spzeros(Int, (m, Par[:nants])) # a_ij if antenna j is on in interval i (central antennas)
         build_A!(Ag, SE, Ip, 2)
 
@@ -196,12 +196,12 @@ for ns ∈ NS, is ∈ IS
             end
         end
 
-        # Model constraint (3)
+        @info "Model constraint (3)"
         for i ∈ 1:m
             @constraint(model, yg[i] ≤ sum(x[j] * Ag[i, j] for j ∈ 1:Par[:nants]))
         end
 
-        # Model constraint (4)
+        @info "Model constraint (4)"
         Af = spzeros(Int, (m, Par[:nants])) # a_ij if antenna j is on in interval i (central antennas)
         build_A!(Af, SE, Ip, 1)
 
@@ -214,43 +214,43 @@ for ns ∈ NS, is ∈ IS
             end
         end
 
-        # Model constraint (5)
+        @info "Model constraint (5)"
         for i ∈ 1:m
             @constraint(model, yf[i] ≤ sum(x[j] * Af[i, j] for j ∈ 1:Par[:nants]))
         end
 
 
-        # Model constraint (6)
+        @info "Model constraint (6)"
         for i ∈ 1:m
             @constraint(model, yg[i] + yf[i] + yn[i] ≥ 1)
         end
 
 
-        # Model constraint (7)
+        @info "Model constraint (7)"
         for i ∈ 1:m
             @constraint(model, yg[i] + yn[i] ≤ 1)
         end
 
-        # Model constraint (8)
+        @info "Model constraint (8)"
         for i ∈ 1:m
             @constraint(model, yf[i] + yn[i] ≤ 1)
         end
 
 
-        # Model constraint (9)
+        @info "Model constraint (9)"
         @constraint(model, sum(L[i] * yg[i] for i ∈ 1:m) ≥ Par[:LMINg])
 
-        # Model constraint (10)
+        @info "Model constraint (10)"
         @constraint(model, sum(L[i] * yn[i] for i ∈ 1:m) ≤ Par[:LMAXn])
 
-        # Model constraint (13)
+        @info "Model constraint (13)"
         if Par[:L] > 0
             local k = 1
             local SL = L[k]
-            push!(L, 0.0) 
+            push!(L, 0.0)
             while k ≤ m
                 while SL < Par[:L] && k ≤ m
-                    k = k +  1
+                    k = k + 1
                     SL = SL + L[k]
                 end
                 if k ≤ m
@@ -262,20 +262,19 @@ for ns ∈ NS, is ∈ IS
                     end
                     i = k
                     @constraint(model, sum(L[k] * yn[k] for k ∈ i:iL) ≤ Par[:LMAXnL])
-                    k = k + 1 
+                    k = iL + 1 # should be k = k + 1 -> infinite loop
                     SL = SL - L[i] + L[k]
                 end
             end
-            deleteat!(L, length(L)) 
+            deleteat!(L, length(L))
         end
-        #
 
-        # Model constraints Anchors
+        @info "Model constraints Anchors: deprecated"
         for j ∈ Par[:Ach]
             @constraint(model, x[j] == 1.0)
         end
 
-        # Model constraints number of antennas
+        @info "Model constraints number of antennas: deprecated"
         if Par[:b] != 0
             @constraint(model, sum(x[j] for j ∈ eachindex(x)) == Par[:b])
         end
@@ -290,7 +289,7 @@ for ns ∈ NS, is ∈ IS
     global sol_yfs = zeros(Int, 1, m)
     global sol_yns = zeros(Int, 1, m)
 
-    
+
     dpts = []
     optconsts = []
     nintss = []
@@ -303,10 +302,10 @@ for ns ∈ NS, is ∈ IS
     mems = []
     tstatus = []
 
-    # Start Gurobi Configuration  
+    @info "Start Gurobi Configuration"
     hardlimit = 7200 # Max Time For Solver: 120 mnts 
     set_optimizer_attribute(model, "TimeLimit", hardlimit)
-    # Configure Logging
+    # Configure Gurobi Logging
     gurobi_log_instance = savename("gurobi_log", instance_dict, "txt")
     set_optimizer_attribute(model, "LogFile", datadir("sims/paper_table", gurobi_log_instance)) # Log file path
     set_optimizer_attribute(model, "OutputFlag", 1) # Output info to log
@@ -321,7 +320,7 @@ for ns ∈ NS, is ∈ IS
     t = @elapsed begin
 
         optimize!(model)
-        
+
         if !is_solved_and_feasible(model; dual=false)
             @warn(
                 """
@@ -333,18 +332,18 @@ for ns ∈ NS, is ∈ IS
                 """,
             )
             # If infeasible or not solved continue to next instance
-            continue 
+            continue
         end
 
         mem = pf.logmessage(1)
         push!(mems, mem)
 
-        
+
         global nants = Par[:nants]
         push!(nantss, nants)
-        push!(insts,is)
+        push!(insts, is)
         push!(nintss, m)
-        
+
         global dpt = dataproctime
         push!(dpts, dpt)
         global optconst = optconsttime
@@ -372,7 +371,7 @@ for ns ∈ NS, is ∈ IS
         global sol_x = [round(Int, value(x[i])) for i ∈ 1:Par[:nants]]'
         sol_xs[1, :] = sol_x[:]
         global sol_yg = [round(Int, value(yg[i])) for i ∈ 1:m]'
-        sol_ygs[1, :] = sol_yg[:]     
+        sol_ygs[1, :] = sol_yg[:]
         global sol_yf = [round(Int, value(yf[i])) for i ∈ 1:m]'
         sol_yfs[1, :] = sol_yf[:]
         global sol_yn = [round(Int, value(yn[i])) for i ∈ 1:m]'
@@ -453,6 +452,4 @@ for ns ∈ NS, is ∈ IS
     end
 
     @info ">>>>>>>>>> END"
-    flush(io)
 end
-close(io)
