@@ -262,7 +262,7 @@ for ns ∈ NS, is ∈ IS
                     end
                     i = k
                     @constraint(model, sum(L[k] * yn[k] for k ∈ i:iL) ≤ Par[:LMAXnL])
-                    k = k + 1 # should be k = k + 1 
+                    k = k + 1 
                     SL = SL - L[i] + L[k]
                 end
             end
