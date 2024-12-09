@@ -263,13 +263,13 @@ optconsttime = @elapsed begin
       if k ≤ m
         iL = k
         SL = L[k]
-        while SL < Par[:L]
+        while SL < Par[:L] && k > 1 
           k = k - 1
           SL = SL + L[k]
         end
         i = k
         @constraint(model, sum(L[k] * yn[k] for k ∈ i:iL) ≤ Par[:LMAXnL])
-        k = iL + 1
+        k = k + 1
         SL = SL - L[i] + L[k]
       end
     end

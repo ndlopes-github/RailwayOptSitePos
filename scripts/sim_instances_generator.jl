@@ -30,7 +30,6 @@ Scale = parse(Int, ARGS[1])
 Nsites = Scale * 4
 Length = Nsites * 4
 Seed = parse(Int, ARGS[2])
-#Seed =1
 ################################################
 
 # Parameters
@@ -90,8 +89,8 @@ dataproctime = @elapsed begin
       Npoints=10 * Length,
       PrioritiesList=1:3, # Priorities from 1 to 10
       Atypes=[15.0 10.0 25.0; 18.0 12.0 30.0], # Crescent order for all the coordinates
-      NFairIs=10, # Max number of fair intervals
-      NGoodIs=5, # Max number of good intervals
+      NFairIs=6, # Max number of fair intervals
+      NGoodIs=3, # Max number of good intervals
       save=true # if true: save jld2 preprocessed data
     )
   else

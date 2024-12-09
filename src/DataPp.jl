@@ -1,6 +1,6 @@
 module Pp
 using DrWatson
-@quickactivate "RailwayOptSitePos"
+@quickactivate "OptSitePos"
 
 using XLSX
 using DataFrames
@@ -354,11 +354,12 @@ function FakeSites(Par;
   NGoodIs=3,
   save=true)
 
-  mcs = 2 * EndPoint # Large value to start
+  mcs0 = 2 * EndPoint # Large value to start
+  mcs_min = mcs0 
   mcs_counter = 0
-  seed = Par[:seed]
+  seed = Par[:seed] + 912345678
   
-  while mcs > Par[:mcs] && mcs_counter < 60
+  while mcs0 > Par[:mcs] && mcs_counter < 60
 
     if seed > 0
       Random.seed!(seed)
@@ -533,24 +534,28 @@ function FakeSites(Par;
     nosigns = SE[SE[:, 5].==0, 6]
     @info "Sum of nosign lenths" sum(nosigns)
 
-    mcs = maximum(nosigns)
-    @info "Maximum of nosigns length" mcs
+    mcs0 = maximum(nosigns)
+    @info "Maximum of nosigns length" mcs0
     seed+=10
     mcs_counter+=1
 
     @info "Instance" Par[:nants] Par[:seed] mcs_counter 
-  end
+ 
+      if mcs0 < mcs_min
+          @info "Saving results mcs < mcs_min" mcs0 mcs_min
+          mcs_min = mcs0
+          if save == true
+              nants = Par[:nants]
+              seed = Par[:seed]
+              mcs = Par[:mcs]
+              pdict = @strdict nants seed mcs NFairIs NGoodIs
+              savefilename = savename("cjMSEnm_sim", pdict, "jld2")
+              wsave(datadir("exp_pro", savefilename),
+                    Dict("cj" => cj, "M" => M, "SE" => SE, "nm" => nm))
+          end
+      end
 
-
-  if save == true
-    nants = Par[:nants]
-    seed = Par[:seed]
-    mcs = Par[:mcs]
-    pdict = @strdict nants seed mcs NFairIs NGoodIs
-    savefilename = savename("cjMSEnm_sim", pdict, "jld2")
-    wsave(datadir("exp_pro", savefilename),
-      Dict("cj" => cj, "M" => M, "SE" => SE, "nm" => nm))
-  end
+ end
 
   cj, SE, M, nm
 

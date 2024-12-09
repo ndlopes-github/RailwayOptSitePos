@@ -2,7 +2,7 @@
 # This script is used to generate the simulated instances data
 
 echo "loop start"
-for c in {1..11} #12 -> OutOfMemory
+for c in 12 #{1..11} 
 do
     for i in {1..10}
     do

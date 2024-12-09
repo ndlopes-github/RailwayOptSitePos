@@ -250,19 +250,19 @@ for ns ∈ NS, is ∈ IS
             push!(L, 0.0) 
             while k ≤ m
                 while SL < Par[:L] && k ≤ m
-                    k = k + 1
+                    k = k +  1
                     SL = SL + L[k]
                 end
                 if k ≤ m
                     iL = k
                     SL = L[k]
-                    while SL < Par[:L]
+                    while SL < Par[:L] && k > 1
                         k = k - 1
                         SL = SL + L[k]
                     end
                     i = k
                     @constraint(model, sum(L[k] * yn[k] for k ∈ i:iL) ≤ Par[:LMAXnL])
-                    k = iL + 1
+                    k = k + 1 # should be k = k + 1 
                     SL = SL - L[i] + L[k]
                 end
             end
@@ -304,7 +304,7 @@ for ns ∈ NS, is ∈ IS
     tstatus = []
 
     # Start Gurobi Configuration  
-    hardlimit = 3600 # Max Time For Solver: 60 mnts 
+    hardlimit = 7200 # Max Time For Solver: 120 mnts 
     set_optimizer_attribute(model, "TimeLimit", hardlimit)
     # Configure Logging
     gurobi_log_instance = savename("gurobi_log", instance_dict, "txt")
