@@ -1,7 +1,7 @@
 #= Copyright (C) 2024
 Nuno David Lopes.
 Created:  2024/10/22
-Last changed - N. Lopes:2024/12/09 13:38:51
+Last changed - N. Lopes:2024/12/09 17:40:12
 =#
 
 using DrWatson
@@ -37,7 +37,7 @@ Par = Dict(
   :b => 0,
   # Maximum allowed length for no signal
   # 0.01166*162.9025 approx 1.90 KM
-  :LMAXn => 0.01166*162.9025,
+  :LMAXn => 0.01166 * 162.9025,
   #:LMAXn => 0.1 * 162.9025,
   # Minimum allowed length for good signal
   :LMINg => 0,
@@ -46,10 +46,10 @@ Par = Dict(
   # For restrictions (13)
   # if L=0 do not consider these restrictions
   # in every interval of  length L,
-  :L=>0,
+  :L => 0,
   #:L => 5.0,
   # the lengths of the sections without signal do not sum up more than  LMAXnL.
-  :LMAXnL => 1.0, 
+  :LMAXnL => 1.0,
 
 
   # Indexes of anchors
@@ -168,7 +168,7 @@ optconsttime = @elapsed begin
 
   @info "Integer Variables: constraints (11) and (12)"
   @variable(model, 0 ≤ x[1:Par[:nants]] ≤ 1, Int)
-  @variable(model, 0 ≤ yg[1:m] ≤ 1, Int) 
+  @variable(model, 0 ≤ yg[1:m] ≤ 1, Int)
   @variable(model, 0 ≤ yf[1:m] ≤ 1, Int)
   @variable(model, 0 ≤ yn[1:m] ≤ 1, Int)
 
@@ -250,7 +250,7 @@ optconsttime = @elapsed begin
   @constraint(model, sum(L[i] * yn[i] for i ∈ 1:m) ≤ Par[:LMAXn])
 
 
-  @info "Model constraint (13)" 
+  @info "Model constraint (13)"
   if Par[:L] > 0
     local k = 1
     local SL = L[k]
@@ -263,17 +263,17 @@ optconsttime = @elapsed begin
       if k ≤ m
         iL = k
         SL = L[k]
-        while SL < Par[:L] && k > 1 
+        while SL < Par[:L]
           k = k - 1
           SL = SL + L[k]
         end
         i = k
         @constraint(model, sum(L[k] * yn[k] for k ∈ i:iL) ≤ Par[:LMAXnL])
-        k = iL + 1 # should be k = k + 1 -> infinite loop
-        SL = SL - L[i] + L[k]
+        k = k + 1
+        SL = L[k]
       end
     end
-    deleteat!(L, length(L)) 
+    deleteat!(L, length(L))
   end
 
   @info "Model constraints Anchors"

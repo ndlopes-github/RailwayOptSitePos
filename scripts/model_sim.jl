@@ -1,7 +1,7 @@
 #= Copyright (C) 2024
 Nuno David Lopes.
 Created:  2024/10/22
-Last changed - N. Lopes:2024/12/09 13:40:02
+Last changed - N. Lopes:2024/12/09 17:40:18
 =#
 
 using DrWatson
@@ -256,14 +256,14 @@ for ns ∈ NS, is ∈ IS
                 if k ≤ m
                     iL = k
                     SL = L[k]
-                    while SL < Par[:L] && k > 1
+                    while SL < Par[:L] 
                         k = k - 1
                         SL = SL + L[k]
                     end
                     i = k
                     @constraint(model, sum(L[k] * yn[k] for k ∈ i:iL) ≤ Par[:LMAXnL])
-                    k = iL + 1 # should be k = k + 1 -> infinite loop
-                    SL = SL - L[i] + L[k]
+                    k = k + 1 
+                    SL = L[k] 
                 end
             end
             deleteat!(L, length(L))
