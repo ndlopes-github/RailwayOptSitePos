@@ -91,9 +91,9 @@ After running the model, you can expect the following output:
 
 
 
-+ A CSV file reflecting the optimal facility selection  saved at  data/sims directory.
++ A CSV file reflecting the optimal facility selection  saved at  data/sims/solvit directory.
 
-+ An incremental table  with the summary of the optimal solutions saved at data/exp_pro/table.txt and data/exp_pro/raw_table.csv.
++ An incremental table  with the summary of the optimal solutions saved at data/sims/solvit/table.txt and data/sims/solvit/raw_table.csv.
 
 
 ## Simulated Data (see Section 3.2 of the paper):

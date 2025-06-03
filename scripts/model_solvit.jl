@@ -1,7 +1,7 @@
 #= Copyright (C) 2024
 Nuno David Lopes. 
 Created:  2024/10/22
-Last changed - N. Lopes: 2025/06/03 12:01:24
+Last changed - N. Lopes: 2025/06/03 12:03:34
 =#
 
 using DrWatson
@@ -480,8 +480,8 @@ df_sols[!, "TStatus"] .= tstatus
 
 
 # Write in CSV for easy processing
-CSV.write(datadir("sims/solvit", "raw_table_solvit.csv"), df_sols[!, Par[:nants]+1:end-1], delim = ";", append = true)
-open(datadir("sims/solvit", "table_solvit.txt"), "a") do file
+CSV.write(datadir("sims/solvit", "raw_table.csv"), df_sols[!, Par[:nants]+1:end-1], delim = ";", append = true)
+open(datadir("sims/solvit", "table.txt"), "a") do file
 	write(file, string(df_sols[!, Par[:nants]+1:end]))
 	write(file, "\n\n")
 end
