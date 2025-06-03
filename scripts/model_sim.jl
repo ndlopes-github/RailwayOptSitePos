@@ -286,7 +286,7 @@ for ns ∈ NS, is ∈ IS
     set_optimizer_attribute(model, "TimeLimit", hardlimit)
     # Configure Gurobi Logging
     gurobi_log_instance = savename("gurobi_log", instance_dict, "txt")
-    set_optimizer_attribute(model, "LogFile", datadir("sims/paper_table", gurobi_log_instance)) # Log file path
+    set_optimizer_attribute(model, "LogFile", datadir("sims/" * set_dir, gurobi_log_instance)) # Log file path
     set_optimizer_attribute(model, "OutputFlag", 1) # Output info to log
     set_optimizer_attribute(model, "LogToConsole", 1) # 0: Disable console logging, 1: Enable
     set_optimizer_attribute(model, "Heuristics", 0.01) # Ranges from 0 to 1, where 0 disables heuristics and 1 maximizes heuristic effort. The default is 0.05 (5% of effort).
