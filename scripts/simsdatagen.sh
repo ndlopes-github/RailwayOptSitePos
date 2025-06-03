@@ -2,9 +2,9 @@
 # This script is used to generate the simulated instances data
 
 echo "loop start"
-for c in 12 #{1..11} 
+for c in {1..3} #{1..11} 
 do
-    for i in {1..10}
+    for i in {1..3} #{1..10}
     do
         command time -v  julia ./sim_instances_generator.jl $((2**c)) $((i)) &
     done

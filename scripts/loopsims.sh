@@ -6,9 +6,9 @@
 # generated with the simsdatagen.sh.
 
 echo "loop start"
-for c in {1..11}  
+for c in {1..3} #{1..11}  
 do
-    for i in {1..10}
+    for i in {1..3} #{1..10}
     do
        command time -v  julia ./model_sim.jl $c $i 
     done
