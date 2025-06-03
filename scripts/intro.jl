@@ -3,7 +3,7 @@ using DrWatson
 
 # Here you may include files from the scripts/source directory
 # Running the model with the Simulated Data
-include(scriptsdir("model_sim.jl"))
+include(scriptsdir("model_solvit.jl"))
 
 println(
 """
