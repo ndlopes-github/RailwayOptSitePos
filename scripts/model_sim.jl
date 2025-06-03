@@ -89,7 +89,7 @@ for ns ∈ NS, is ∈ IS
 
         # Images Save and Show
         :ImShow => false,
-        :ImSave => false,
+        :ImSave => true,
     )
 
     @info "Parameters $Par"
