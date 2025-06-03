@@ -1,7 +1,7 @@
 #= Copyright (C) 2024
 Nuno David Lopes. 
 Created:  2024/10/22
-Last changed - N. Lopes: 2025/06/03 11:34:26
+Last changed - N. Lopes: 2025/06/03 12:01:24
 =#
 
 using DrWatson
@@ -46,8 +46,8 @@ Par = Dict(
 	# For restrictions (13)
 	# if L=0 do not consider these restrictions
 	# in every interval of  length L,
-	#:L => 0,
-	:L => 5.0,
+	:L => 0,
+	#:L => 5.0,
 	# the lengths of the sections without signal do not sum up more than  LMAXnL.
 	:LMAXnL => 1.0,
 
@@ -480,8 +480,8 @@ df_sols[!, "TStatus"] .= tstatus
 
 
 # Write in CSV for easy processing
-CSV.write(datadir("sims/solvit", "raw_table_solvit_gurobi.csv"), df_sols[!, Par[:nants]+1:end-1], delim = ";", append = true)
-open(datadir("sims/solvit", "table_solvit_gurobi.txt"), "a") do file
+CSV.write(datadir("sims/solvit", "raw_table_solvit.csv"), df_sols[!, Par[:nants]+1:end-1], delim = ";", append = true)
+open(datadir("sims/solvit", "table_solvit.txt"), "a") do file
 	write(file, string(df_sols[!, Par[:nants]+1:end]))
 	write(file, "\n\n")
 end
