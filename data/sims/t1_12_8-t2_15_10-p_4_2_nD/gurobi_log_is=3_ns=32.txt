@@ -1,0 +1,65 @@
+
+Gurobi 12.0.2 (linux64) logging started ter 03 jun 2025 15:45:20
+
+Set parameter LogFile to value "/home/nuno/DrWatsonProjects/RailwayOptSitePos/data/sims/t1_12_8-t2_15_10-p_4_2_nD/gurobi_log_is=3_ns=32.txt"
+Set parameter OutputFlag to value 1
+Set parameter LogToConsole to value 1
+Set parameter Heuristics to value 0.01
+Set parameter Presolve to value 2
+
+Gurobi 12.0.2 (linux64) logging started ter 03 jun 2025 15:45:21
+
+Set parameter LogFile to value "/home/nuno/DrWatsonProjects/RailwayOptSitePos/data/sims/t1_12_8-t2_15_10-p_4_2_nD/gurobi_log_is=3_ns=32.txt"
+Set parameter OutputFlag to value 1
+Gurobi Optimizer version 12.0.2 build v12.0.2rc0 (linux64 - "Ubuntu 22.04.5 LTS")
+
+CPU model: AMD Ryzen 9 3950X 16-Core Processor, instruction set [SSE2|AVX|AVX2]
+Thread count: 16 physical cores, 32 logical processors, using up to 32 threads
+
+Non-default parameters:
+TimeLimit  36000
+Heuristics  0.01
+Presolve  2
+
+Optimize a model with 3312 rows, 605 columns and 19620 nonzeros
+Model fingerprint: 0xf191ed25
+Variable types: 0 continuous, 605 integer (0 binary)
+Coefficient statistics:
+  Matrix range     [3e-04, 1e+00]
+  Objective range  [1e+00, 4e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+01]
+Found heuristic solution: objective 12.8000000
+Presolve removed 1438 rows and 323 columns
+Presolve time: 0.24s
+Presolved: 1874 rows, 282 columns, 10779 nonzeros
+Variable types: 0 continuous, 282 integer (282 binary)
+Root relaxation presolved: 1874 rows, 282 columns, 10779 nonzeros
+
+
+Root relaxation: objective 4.454702e+00, 323 iterations, 0.01 seconds (0.02 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0    4.45470    0  143   12.80000    4.45470  65.2%     -    0s
+H    0     0                      11.4000000    4.45470  60.9%     -    0s
+H    0     0                       7.8000000    4.45470  42.9%     -    0s
+H    0     0                       6.6000000    4.45470  32.5%     -    0s
+H    0     0                       5.2000000    4.45470  14.3%     -    0s
+H    0     0                       4.6000000    4.45470  3.16%     -    0s
+
+Cutting planes:
+  Gomory: 2
+  Zero half: 1
+  RLT: 1
+
+Explored 1 nodes (431 simplex iterations) in 0.32 seconds (0.45 work units)
+Thread count was 32 (of 32 available processors)
+
+Solution count 6: 4.6 5.2 6.6 ... 12.8
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 4.600000000000e+00, best bound 4.600000000000e+00, gap 0.0000%
+
+User-callback calls 885, time in user-callback 0.00 sec

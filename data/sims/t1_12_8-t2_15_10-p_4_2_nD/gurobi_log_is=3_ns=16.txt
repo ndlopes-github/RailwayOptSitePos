@@ -1,0 +1,55 @@
+
+Gurobi 12.0.2 (linux64) logging started ter 03 jun 2025 15:43:45
+
+Set parameter LogFile to value "/home/nuno/DrWatsonProjects/RailwayOptSitePos/data/sims/t1_12_8-t2_15_10-p_4_2_nD/gurobi_log_is=3_ns=16.txt"
+Set parameter OutputFlag to value 1
+Set parameter LogToConsole to value 1
+Set parameter Heuristics to value 0.01
+Set parameter Presolve to value 2
+
+Gurobi 12.0.2 (linux64) logging started ter 03 jun 2025 15:43:45
+
+Set parameter LogFile to value "/home/nuno/DrWatsonProjects/RailwayOptSitePos/data/sims/t1_12_8-t2_15_10-p_4_2_nD/gurobi_log_is=3_ns=16.txt"
+Set parameter OutputFlag to value 1
+Gurobi Optimizer version 12.0.2 build v12.0.2rc0 (linux64 - "Ubuntu 22.04.5 LTS")
+
+CPU model: AMD Ryzen 9 3950X 16-Core Processor, instruction set [SSE2|AVX|AVX2]
+Thread count: 16 physical cores, 32 logical processors, using up to 32 threads
+
+Non-default parameters:
+TimeLimit  36000
+Heuristics  0.01
+Presolve  2
+
+Optimize a model with 1377 rows, 301 columns and 7344 nonzeros
+Model fingerprint: 0x3f35743c
+Variable types: 0 continuous, 301 integer (0 binary)
+Coefficient statistics:
+  Matrix range     [4e-03, 1e+00]
+  Objective range  [1e+00, 4e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+01]
+Found heuristic solution: objective 7.8000000
+Presolve removed 947 rows and 221 columns
+Presolve time: 0.04s
+Presolved: 430 rows, 80 columns, 1702 nonzeros
+Variable types: 0 continuous, 80 integer (80 binary)
+Root relaxation presolved: 430 rows, 80 columns, 1702 nonzeros
+
+
+Root relaxation: objective 2.200000e+00, 74 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+*    0     0               0       2.2000000    2.20000  0.00%     -    0s
+
+Explored 1 nodes (74 simplex iterations) in 0.05 seconds (0.06 work units)
+Thread count was 32 (of 32 available processors)
+
+Solution count 2: 2.2 7.8 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.200000000000e+00, best bound 2.200000000000e+00, gap 0.0000%
+
+User-callback calls 943, time in user-callback 0.00 sec

@@ -1,0 +1,54 @@
+
+Gurobi 12.0.2 (linux64) logging started ter 03 jun 2025 15:42:43
+
+Set parameter LogFile to value "/home/nuno/DrWatsonProjects/RailwayOptSitePos/data/sims/t1_12_8-t2_15_10-p_4_2_nD/gurobi_log_is=1_ns=16.txt"
+Set parameter OutputFlag to value 1
+Set parameter LogToConsole to value 1
+Set parameter Heuristics to value 0.01
+Set parameter Presolve to value 2
+
+Gurobi 12.0.2 (linux64) logging started ter 03 jun 2025 15:42:43
+
+Set parameter LogFile to value "/home/nuno/DrWatsonProjects/RailwayOptSitePos/data/sims/t1_12_8-t2_15_10-p_4_2_nD/gurobi_log_is=1_ns=16.txt"
+Set parameter OutputFlag to value 1
+Gurobi Optimizer version 12.0.2 build v12.0.2rc0 (linux64 - "Ubuntu 22.04.5 LTS")
+
+CPU model: AMD Ryzen 9 3950X 16-Core Processor, instruction set [SSE2|AVX|AVX2]
+Thread count: 16 physical cores, 32 logical processors, using up to 32 threads
+
+Non-default parameters:
+TimeLimit  36000
+Heuristics  0.01
+Presolve  2
+
+Optimize a model with 1075 rows, 244 columns and 5236 nonzeros
+Model fingerprint: 0x9fee625d
+Variable types: 0 continuous, 244 integer (0 binary)
+Coefficient statistics:
+  Matrix range     [1e-04, 1e+00]
+  Objective range  [1e+00, 4e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+01]
+Presolve removed 861 rows and 203 columns
+Presolve time: 0.01s
+Presolved: 214 rows, 41 columns, 753 nonzeros
+Variable types: 0 continuous, 41 integer (41 binary)
+Root relaxation presolved: 214 rows, 41 columns, 753 nonzeros
+
+
+Root relaxation: objective 4.400000e+00, 13 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+*    0     0               0       4.4000000    4.40000  0.00%     -    0s
+
+Explored 1 nodes (13 simplex iterations) in 0.02 seconds (0.02 work units)
+Thread count was 32 (of 32 available processors)
+
+Solution count 1: 4.4 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 4.400000000000e+00, best bound 4.400000000000e+00, gap 0.0000%
+
+User-callback calls 1042, time in user-callback 0.00 sec
