@@ -124,6 +124,8 @@ Additional Notes:
 The outputs, including tables and Gurobi log files, are saved in the directory `data/sims/t1_12_8-t2_15_10-p_4_2_nD`.
 This outputs are tables and gurobi log files used to generate the tables on the paper 
 
+**Note:** To facilitate testing of this procedure, the number of generated instances in the scripts has been reduced, as data generation and simulations are time- and resource-intensive. Adjust these values in the scripts as needed for your experiments.
+
 # Contributing
 
 We welcome contributions to this project! If you find any issues or have suggestions for improvements, please feel free to open an issue or submit a pull request. We appreciate your involvement in making this implementation more robust and accurate.
