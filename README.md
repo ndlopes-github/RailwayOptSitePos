@@ -56,6 +56,8 @@ using DrWatson
 ```
 which auto-activate the project and enable local path handling from DrWatson.
 
+- Note: An active Gurobi license is required to run the code as is. However, you can replace Gurobi with HiGHs, an open-source optimization solver. To do this, install the HiGHs.jl package (https://github.com/jump-dev/HiGHS.jl) and modify the solver settings in the scripts accordingly. Refer to the HiGHs documentation for detailed instructions.
+
 # USAGE
 
 ##  Real Data (see Section 3.1 of the paper):
