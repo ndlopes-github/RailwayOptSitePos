@@ -131,21 +131,21 @@ To reproduce the examples in Section 3.2, follow these steps:
 
 After running the simulations, you can expect the following output:
 
++ A summary of the results and log information displayed at the terminal or console.
+
 + Tables and Gurobi log files saved in:
   ```
   data/sims/t1_12_8-t2_15_10-p_4_2_nD
   ```
-+ These outputs are used to generate the tables in the paper.
+ (These outputs are used to generate the correspondent tables in the paper.)
 
-### Additional Notes
+**Additional Notes**
 
 - The number of generated instances is controlled by the `simsdatagen.sh` script.
 - The characteristics of the generated data are controlled by the `sim_instances_generator.jl` script.
 - The number of simulations is controlled by the `loopsims.sh` script.
 - The model parameters are controlled by the `model_sim.sh` script.
-
-**Note:**  
-To facilitate testing, the number of generated instances in the scripts has been reduced, as data generation and simulations are time- and resource-intensive. Adjust these values in the scripts as needed for your experiments.
+- To facilitate testing, the number of generated instances in the scripts has been reduced, as data generation and simulations are time- and resource-intensive. Adjust these values in the scripts as needed for your experiments.
 
 # Contributing
 
