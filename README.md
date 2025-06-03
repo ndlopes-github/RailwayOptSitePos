@@ -100,28 +100,29 @@ After running the model, you can expect the following output:
 
 ## Simulated Data (see Section 3.2 of the paper):
 
-In order to reproduce the examples in section 3.2 follow the steps:
-1- generate data
-scripts/simsdatagen.sh
-(randomization is seed based)
-this script calls julia sim_instances_generator.jl
+To reproduce the examples in Section 3.2, follow these steps to generate and simulate data:
+1. Generate data.
+Run the script `scripts/simsdatagen.sh` to generate data.
+Note: The randomization process is seed-based to ensure reproducibility.
+This script calls the Julia script `sim_instances_generator.jl`.
 
-it locates data at dir:
+The generated data will be located in the directory:
 data/exp_pro/t1_12_8-t2_15_10-p_4_2_nD
 
 2- to generate the simulations 
-run scripts/loopsims.sh
+Run the script `scripts/loopsims.sh` to generate the simulations.
 which calls julia model_sim.sh
 
-Notes:
+Additional Notes:
 
-1-The number of generated instances is controled in simsdatagen.sh
-2-The caracteristics of generated data is controled in sim_instances_generator.jl
-3- the number of simulations is controlled in loopsims.sh
-4- the model parameters are controlled in model_sim.sh
+1. The number of generated instances is controlled by the `simsdatagen.sh` script.
+2. The characteristics of the generated data are controlled by the `sim_instances_generator.jl` script.
+3. The number of simulations is controlled by the `loopsims.sh` script.
+4. The model parameters are controlled by the `model_sim.sh` script.
 
 
-The outputs are saved in data/sims/t1_12_8-t2_15_10-p_4_2_nD
+The outputs, including tables and Gurobi log files, are saved in the directory `data/sims/t1_12_8-t2_15_10-p_4_2_nD`.
+This outputs are tables and gurobi log files used to generate the tables on the paper 
 
 # Contributing
 
