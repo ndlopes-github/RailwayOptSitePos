@@ -1,7 +1,7 @@
 #= Copyright (C) 2024
 Nuno David Lopes.
 Created:  2024/10/22
-Last changed - N. Lopes:2024/12/09 17:40:18
+Last changed - N. Lopes:2025/05/30 11:30:47
 =#
 
 using DrWatson
@@ -19,8 +19,9 @@ using SparseArrays
 @info "Input data should be generated with simsdatagen.sh "
 
 # Set the Input data directory and file prefix
-set_dir = "sim_set4_2to14_mcs_15_NFair_6_NGood_3/"
-file_prefix = "cjMSEnm_sim_NFairIs=6_NGoodIs=3_mcs=15.0"
+set_dir = "t1_12_8-t2_15_10-p_4_2_nD"
+nDratio = 1.0 # Length =  nDratio * nants (Must be compatible with the generated data)
+file_prefix = "cjMSEnm_sim_NFairIs=4_NGoodIs=2_mcs=2.0"
 
 # Set the output log to file
 logger = ConsoleLogger(stderr, Logging.Info; show_limited=false)
@@ -34,6 +35,7 @@ include(srcdir("Plts.jl"))
 import .Pp as pp
 import .PltFs as pf
 
+
 # INSTANCES 
 Instance_I = parse(Int, ARGS[1])
 Instance_J = parse(Int, ARGS[2])
@@ -42,13 +44,14 @@ IS = [Instance_J]
 
 for ns ∈ NS, is ∈ IS
 
-    @info "Instance" now() ns is
+    @info "Start date = $(now())"
+    @info "Instance = $ns $is"
     instance_dict = @strdict ns is
 
     Scale = Int(ns * 2^(-3))
     Filename = set_dir * "/" * file_prefix * "_nants=$(ns)_seed=$(is).jld2"
     Nsites = Scale * 4
-    Length = Nsites * 4
+    Length = nDratio * Nsites * 2 # Nsites * 4
     ################################################
 
     # Parameters
@@ -69,10 +72,10 @@ for ns ∈ NS, is ∈ IS
         # For special restrictions (13)
         #if L=0 do not consider these restrictions
         # in every interval of  length L,
-        :L => 20.0,
+        :L => 10.0, #20.0,
         #:L => 0,
         # the lengths of the sections without signal do not sum up more than  LMAXnL.
-        :LMAXnL => 15.0,
+        :LMAXnL => 2.0,#15.0,
 
         # Indexes of anchors
         :Ach => [],
@@ -89,7 +92,7 @@ for ns ∈ NS, is ∈ IS
         :ImSave => false,
     )
 
-    @info Par
+    @info "Parameters $Par"
 
     @info ">>>>>>>>>> Start: Data Processing: "
 
@@ -102,7 +105,7 @@ for ns ∈ NS, is ∈ IS
             error(">>>>>>>>>> Wrong :preprocess options.")
         end
     end
-    @info ">>>>>>>>>> Data Processing Elapsed time=" dataproctime
+    @info ">>>>>>>>>> Data Processing Elapsed time = $dataproctime"
 
 
     ###################################################################################
@@ -129,24 +132,30 @@ for ns ∈ NS, is ∈ IS
         SE = hcat(SE, lngths)
         println("")
         nosigns = SE[SE[:, 5].==0, 6]
-        @info "Sum of nosign lenths" sum(nosigns)
-        @info "Maximum of nosigns length" maximum(nosigns)
-        @info "Line coverage starts at" SE[1, 1]
-        @info "Line coverage end at" SE[end, 1]
+        @info "Sum of nosign lenths  $(sum(nosigns))"
+        @info "Maximum of nosigns length  $(maximum(nosigns))"
+
+        if maximum(nosigns) > Par[:LMAXnL]
+            error("Bad data partition: EXIT")
+        end
+
+        @info "Line coverage starts = $(SE[1, 1])"
+        @info "Line coverage end = $(SE[end, 1])"
 
         # Intervals
         Ip = unique(SE[:, 1])
+
         # List of Interval lengths
         L = zeros(length(Ip) - 1)
         L[:] .= Ip[2:end] .- Ip[1:end-1]
         global m = length(L)
 
 
-        @info ">>>>>>>>>> Number of intervals is" m
+        @info ">>>>>>>>>> Number of intervals =  $m"
         maxL = maximum(L[:])
         minL = minimum(L[:])
-        @info ">>>>>>>>>> Maximum interval L[i] is" maxL
-        @info ">>>>>>>>>> Minimum interval L[i] is" minL
+        @info ">>>>>>>>>> Maximum interval L[i] = $maxL"
+        @info ">>>>>>>>>> Minimum interval L[i] = $minL"
 
         @info "Setting Gurobi Optimizer "
         model = Model(Gurobi.Optimizer)
@@ -185,56 +194,38 @@ for ns ∈ NS, is ∈ IS
         end
 
         @info "Model constraint (2)"
-        Ag = spzeros(Int, (m, Par[:nants])) # a_ij if antenna j is on in interval i (central antennas)
-        build_A!(Ag, SE, Ip, 2)
-
-        for i ∈ 1:m
-            for j ∈ 1:Par[:nants]
-                if Ag[i, j] == 1.0
-                    @constraint(model, yg[i] - x[j] ≥ 0)
-                end
+        Afg = spzeros(Int, (m, Par[:nants])) # a_ij if antenna j is on in interval i (central antennas)
+        build_A!(Afg, SE, Ip, 2)
+        for i ∈ 1:m, j ∈ 1:Par[:nants]
+            if Afg[i, j] == 1.0
+                @constraint(model, yg[i] - x[j] ≥ 0)
             end
         end
 
         @info "Model constraint (3)"
-        for i ∈ 1:m
-            @constraint(model, yg[i] ≤ sum(x[j] * Ag[i, j] for j ∈ 1:Par[:nants]))
-        end
+        @constraint(model, [i = 1:m], yg[i] ≤ sum(x[j] * Afg[i, j] for j ∈ 1:Par[:nants] if Afg[i, j] ≠ 0))
 
         @info "Model constraint (4)"
-        Af = spzeros(Int, (m, Par[:nants])) # a_ij if antenna j is on in interval i (central antennas)
-        build_A!(Af, SE, Ip, 1)
-
-
-        for i ∈ 1:m
-            for j ∈ 1:Par[:nants]
-                if Af[i, j] == 1.0
-                    @constraint(model, yf[i] - x[j] ≥ 0)
-                end
+        Afg = spzeros(Int, (m, Par[:nants])) # a_ij if antenna j is on in interval i (central antennas)
+        build_A!(Afg, SE, Ip, 1)
+        for i ∈ 1:m, j ∈ 1:Par[:nants]
+            if Afg[i, j] == 1.0
+                @constraint(model, yf[i] - x[j] ≥ 0)
             end
         end
 
         @info "Model constraint (5)"
-        for i ∈ 1:m
-            @constraint(model, yf[i] ≤ sum(x[j] * Af[i, j] for j ∈ 1:Par[:nants]))
-        end
-
+        @constraint(model, [i = 1:m], yf[i] ≤ sum(x[j] * Afg[i, j] for j ∈ 1:Par[:nants] if Afg[i, j] ≠ 0))
 
         @info "Model constraint (6)"
-        for i ∈ 1:m
-            @constraint(model, yg[i] + yf[i] + yn[i] ≥ 1)
-        end
+        @constraint(model, [i = 1:m], yg[i] + yf[i] + yn[i] ≥ 1)
 
 
         @info "Model constraint (7)"
-        for i ∈ 1:m
-            @constraint(model, yg[i] + yn[i] ≤ 1)
-        end
+        @constraint(model, [i = 1:m], yg[i] + yn[i] ≤ 1)
 
         @info "Model constraint (8)"
-        for i ∈ 1:m
-            @constraint(model, yf[i] + yn[i] ≤ 1)
-        end
+        @constraint(model, [i = 1:m], yf[i] + yn[i] ≤ 1)
 
 
         @info "Model constraint (9)"
@@ -243,44 +234,32 @@ for ns ∈ NS, is ∈ IS
         @info "Model constraint (10)"
         @constraint(model, sum(L[i] * yn[i] for i ∈ 1:m) ≤ Par[:LMAXn])
 
-        @info "Model constraint (13)"
+
         if Par[:L] > 0
-            local k = 1
-            local SL = L[k]
-            push!(L, 0.0)
-            while k ≤ m
-                while SL < Par[:L] && k ≤ m
-                    k = k + 1
-                    SL = SL + L[k]
-                end
-                if k ≤ m
-                    iL = k
-                    SL = L[k]
-                    while SL < Par[:L] 
-                        k = k - 1
-                        SL = SL + L[k]
+            @info "Model constraint new (13)"
+            push!(L, Par[:L] + 1)
+            for i ∈ 1:m
+                if L[i] > Par[:LMAXnL]
+                    JuMP.fix(yn[i], 0; force=true) # instead of @constraint(model, yn[i]==0)
+                else
+                    iL = i
+                    SLK = L[iL]
+                    while SLK ≤ Par[:L]
+                        iL += 1
+                        SLK += L[iL]
                     end
-                    i = k
-                    @constraint(model, sum(L[k] * yn[k] for k ∈ i:iL) ≤ Par[:LMAXnL])
-                    k = k + 1 
-                    SL = L[k] 
+                    if iL ≤ m
+                        @constraint(model, sum(L[k] * yn[k] for k ∈ i:(iL-1)) + (Par[:L] - (SLK - L[iL])) * yn[iL] ≤ Par[:LMAXnL])
+                    else
+                        @constraint(model, sum(L[k] * yn[k] for k ∈ i:(iL-1)) ≤ Par[:LMAXnL])
+                    end
                 end
             end
             deleteat!(L, length(L))
         end
-
-        @info "Model constraints Anchors: deprecated"
-        for j ∈ Par[:Ach]
-            @constraint(model, x[j] == 1.0)
-        end
-
-        @info "Model constraints number of antennas: deprecated"
-        if Par[:b] != 0
-            @constraint(model, sum(x[j] for j ∈ eachindex(x)) == Par[:b])
-        end
-
     end
-    @info ">>>>>>>>>> Problem construction Elapsed time=" optconsttime
+
+    @info ">>>>>>>>>> Problem construction Elapsed time = $optconsttime"
 
 
     # Allocating space for solutions (0/1)s
@@ -303,7 +282,7 @@ for ns ∈ NS, is ∈ IS
     tstatus = []
 
     @info "Start Gurobi Configuration"
-    hardlimit = 7200 # Max Time For Solver: 120 mnts 
+    hardlimit = 3600 * 10 # Max Time For Solver: 120 mnts 
     set_optimizer_attribute(model, "TimeLimit", hardlimit)
     # Configure Gurobi Logging
     gurobi_log_instance = savename("gurobi_log", instance_dict, "txt")
@@ -311,7 +290,7 @@ for ns ∈ NS, is ∈ IS
     set_optimizer_attribute(model, "OutputFlag", 1) # Output info to log
     set_optimizer_attribute(model, "LogToConsole", 1) # 0: Disable console logging, 1: Enable
     set_optimizer_attribute(model, "Heuristics", 0.01) # Ranges from 0 to 1, where 0 disables heuristics and 1 maximizes heuristic effort. The default is 0.05 (5% of effort).
-    set_optimizer_attribute(model, "PreSolve", 2) # Controls the presolve level. (range -1 to 3; -1 = auto, 0 = no presolve, 1 = conservative, 2 = aggressive)
+    set_optimizer_attribute(model, "PreSolve", 1) # Controls the presolve level. (range -1 to 3; -1 = auto, 0 = no presolve, 1 = conservative, 2 = aggressive)
     # End Gurobi Configuration
 
 
@@ -351,19 +330,19 @@ for ns ∈ NS, is ∈ IS
 
         global stime = solve_time(model)
         push!(stimes, stime)
-        @info ">>>>>>>>>> First Solution: solve_time(model) $(stime)"
+        @info ">>>>>>>>>> First Solution: solve_time(model) = $stime"
         global tstat = termination_status(model)
         push!(tstatus, tstat)
-        @info ">>>>>>>>>> Termination status = " tstat
+        @info ">>>>>>>>>> Termination status =  $tstat"
         global nv = num_variables(model)
         push!(nvars, nv)
-        @info ">>>>>>>>>> Number of variables = " nv
+        @info ">>>>>>>>>> Number of variables =  $nv"
         global nc = sum(num_constraints(model, F, S) for (F, S) in list_of_constraint_types(model))
         push!(nconstr, nc)
-        @info ">>>>>>>>>> Number of constraints = " nc
+        @info ">>>>>>>>>> Number of constraints =  $nc"
         global ob = objective_value(model)
         push!(obvalues, ob)
-        @info ">>>>>>>>>> Objective value = " ob
+        @info ">>>>>>>>>> Objective value =  $ob"
 
 
         min_cost = round(ob; digits=2)
@@ -378,13 +357,14 @@ for ns ∈ NS, is ∈ IS
         sol_yns[1, :] = sol_yn[:]
 
     end
-    @info ">>>>>>>>>> Total Solver Elapsed time=" t
+    @info ">>>>>>>>>> Total Solver Elapsed time=  $t"
 
-    @info "solution summary" solution_summary(model; result=1, verbose=true)
+    @info "solution summary $(solution_summary(model; result=1, verbose=true))"
 
-    @info ">>>>>>>>>> Number and names of selected antennas (up to " Par[:nants] " Antennas)"
+    @info ">>>>>>>>>> Number and names of selected antennas (up to  $(Par[:nants])  Antennas)"
     nonant = sum(sol_xs, dims=2)
-    @info nonant
+    @info ">>>>>>>>> Number of selected antennas = $nonant"
+
     for i ∈ 1:size(sol_xs, 1)
         idx = findall(x -> x == 1, sol_xs[i, :])
         AC = c[idx, 2]
@@ -395,15 +375,15 @@ for ns ∈ NS, is ∈ IS
     @info costs
 
     faircov = (1.0 .- sol_ygs .- sol_yns) * L
-    @info ">>>>>>>>>> Fair coverage length = " faircov " [km]"
+    @info ">>>>>>>>>> Fair coverage length =  $faircov  [km]"
     nocov = sol_yns * L
-    @info ">>>>>>>>>> No coverage lengths = $(nocov)  [km] ."
+    @info ">>>>>>>>>> No coverage lengths = $(nocov)  [km]"
     @info ">>>>>>>>>> No Coverage extras"
 
     nocovmaxsecs = []
     for i ∈ 1:size(sol_yns, 1)
         idx = findall(x -> x == 1, sol_yns[i, :])
-        @info ">>>>>>>>>> Solution " i
+        @info ">>>>>>>>>> Solution  $i"
         considxs = pp.find_consecutive_integers(idx)
         if length(considxs) > 0
             # @info ">>>>>>>>>> Sample of consec. indexes " considxs[1:end]
@@ -445,8 +425,8 @@ for ns ∈ NS, is ∈ IS
 
 
     # Write in CSV for easy processing
-    CSV.write(datadir("sims/paper_table", "raw_table.csv"), df_sols[!, Par[:nants]+1:end-1], delim=";", append=true)
-    open(datadir("sims/paper_table", "table.txt"), "a") do file
+    CSV.write(datadir("sims/"*set_dir, "raw_table.csv"), df_sols[!, Par[:nants]+1:end-1], delim=";", append=true)
+    open(datadir("sims/"*set_sir, "table.txt"), "a") do file
         write(file, string(df_sols[!, Par[:nants]+1:end]))
         write(file, "\n\n")
     end

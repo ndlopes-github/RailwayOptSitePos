@@ -1,17 +1,12 @@
 #= Copyright (C) 2024
 Nuno David Lopes.
 Created:  2024/10/22
-Last changed - N. Lopes:2024/11/22 16:49:02
+Last changed - N. Lopes:2025/05/27 15:34:12
 =#
 
 using DrWatson
 @quickactivate "OptSitePos"
 
-using LinearAlgebra
-using DataFrames
-using CSV
-using Gurobi
-using JuMP
 
 include(srcdir("DataPp.jl"))
 include(srcdir("Plts.jl"))
@@ -24,11 +19,8 @@ import .PltFs as pf
 ###############################################
 # Use with simsdatagen.sh #
 Scale = parse(Int, ARGS[1])
-#Scale= 2^5
-#Scale=2^5 # Debug
-#Scale=2^10
 Nsites = Scale * 4
-Length = Nsites * 4
+Length = 2 * Nsites 
 Seed = parse(Int, ARGS[2])
 ################################################
 
@@ -73,8 +65,8 @@ Par = Dict(
   # Seed for data generation
   :seed => Seed, # 0 for no Seed
 
-  # Initial Max Continous Signal
-  :mcs => 15.0 # Lenght for no restriction 
+  # Initial Max Continuous Signal
+  :mcs => 2.0 #15.0 # Lenght for no restriction 
 )
 
 println(">>>>>>>>>> Start: Data Processing: ")
@@ -86,11 +78,13 @@ dataproctime = @elapsed begin
     c, SE, M, nm = pp.FakeSites(Par;
       StartPoint=0.0, # Starting Point in Km
       EndPoint=Length, # Ending Point in Km
-      Npoints=10 * Length,
+      Npoints=10 * Length, # Number of points to PLOT only
       PrioritiesList=1:3, # Priorities from 1 to 10
-      Atypes=[15.0 10.0 25.0; 18.0 12.0 30.0], # Crescent order for all the coordinates
-      NFairIs=6, # Max number of fair intervals
-      NGoodIs=3, # Max number of good intervals
+      Atypes=[12.0 8.0 25.0; 15.0 10.0 30.0], # Crescent order for all the coordinates 
+      NFairIs=4, # Max number of fair intervals
+      NGoodIs=2, # Max number of good intervals
+      ntries=100, # Number of tries to generate the data
+      savedir="t1_12_8-t2_15_10-p_4_2_nD",
       save=true # if true: save jld2 preprocessed data
     )
   else

@@ -100,16 +100,28 @@ After running the model, you can expect the following output:
 
 ## Simulated Data (see Section 3.2 of the paper):
 
-Follow the steps of the Real Data replacing the command in 1. by :
-```
-$julia scripts/model_sim.jl
-```
+In order to reproduce the examples in section 3.2 follow the steps:
+1- generate data
+scripts/simsdatagen.sh
+(randomization is seed based)
+this script calls julia sim_instances_generator.jl
 
-The output is also similar to the Real Data case:
+it locates data at dir:
+data/exp_pro/t1_12_8-t2_15_10-p_4_2_nD
 
-Example: Signal coverage of the facility selection
-   ![Signal coverage of the facility selection](plots/solution_coverage.png)
+2- to generate the simulations 
+run scripts/loopsims.sh
+which calls julia model_sim.sh
 
+Notes:
+
+1-The number of generated instances is controled in simsdatagen.sh
+2-The caracteristics of generated data is controled in sim_instances_generator.jl
+3- the number of simulations is controlled in loopsims.sh
+4- the model parameters are controlled in model_sim.sh
+
+
+The outputs are saved in data/sims/t1_12_8-t2_15_10-p_4_2_nD
 
 # Contributing
 
