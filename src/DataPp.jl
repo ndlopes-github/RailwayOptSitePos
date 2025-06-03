@@ -352,14 +352,16 @@ function FakeSites(Par;
   Atypes=[15.0 10.0 25.0; 18.0 12.0 30.0],#[10.0 6.0 25.0; 12.0 8.0 30.0], # Fair range Good range Height
   NFairIs=6,
   NGoodIs=3,
+  ntries=60,
+  savedir="",
   save=true)
 
   mcs0 = 2 * EndPoint # Large value to start
-  mcs_min = mcs0 
+  mcs_min = mcs0
   mcs_counter = 0
-  seed = Par[:seed] + 912345678
-  
-  while mcs0 > Par[:mcs] && mcs_counter < 60
+  seed = Par[:seed] + 789123456
+
+  while mcs0 > Par[:mcs] && mcs_counter ≤ ntries
 
     if seed > 0
       Random.seed!(seed)
@@ -400,7 +402,7 @@ function FakeSites(Par;
     global cj = hcat(nm, Factors .* Priorities)
 
     if Par[:ImShow] == false && Par[:ImSave] == false
-     global M = nothing
+      global M = nothing
       println(">>>>>>>>>> Skip M construction (No Plots options)")
     else
       global M = (Par[:cll] - 20.0) * ones((Npoints, Nant + 1))
@@ -536,26 +538,29 @@ function FakeSites(Par;
 
     mcs0 = maximum(nosigns)
     @info "Maximum of nosigns length" mcs0
-    seed+=10
-    mcs_counter+=1
+    seed += 10
+    mcs_counter += 1
 
-    @info "Instance" Par[:nants] Par[:seed] mcs_counter 
- 
-      if mcs0 < mcs_min
-          @info "Saving results mcs < mcs_min" mcs0 mcs_min
-          mcs_min = mcs0
-          if save == true
-              nants = Par[:nants]
-              seed = Par[:seed]
-              mcs = Par[:mcs]
-              pdict = @strdict nants seed mcs NFairIs NGoodIs
-              savefilename = savename("cjMSEnm_sim", pdict, "jld2")
-              wsave(datadir("exp_pro", savefilename),
-                    Dict("cj" => cj, "M" => M, "SE" => SE, "nm" => nm))
-          end
+    @info "Instance" Par[:nants] Par[:seed] mcs_counter
+
+    if mcs0 < mcs_min
+      mcs_min = mcs0
+      if mcs0 ≤ Par[:mcs]
+        if save == true
+          @info "Saving results for mcs = $mcs0" 
+          nants = Par[:nants]
+          seed = Par[:seed]
+          mcs = Par[:mcs]
+          pdict = @strdict nants seed mcs NFairIs NGoodIs
+          savefilename = savename("cjMSEnm_sim", pdict, "jld2")
+          wsave(datadir("exp_pro/"*savedir, savefilename),
+            Dict("cj" => cj, "M" => M, "SE" => SE, "nm" => nm))
+        end
+        break
       end
+    end
 
- end
+  end
 
   cj, SE, M, nm
 
@@ -599,7 +604,7 @@ function LoadJLD2Data(Par; filename="")
     @info "Railway length=" M[end, 1] - M[1, 1]
   end
 
-  @info "Costs informations=" cj
+  #@info "Costs informations=" cj
   @info ">>>>>>>>>> LoadJLD2Data end"
   cj, SE, M, nm
 end
