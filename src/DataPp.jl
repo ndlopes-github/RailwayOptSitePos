@@ -597,14 +597,6 @@ function LoadJLD2Data(Par; filename="")
   SE = dDict["SE"]
   nm = dDict["nm"]
 
-  # Print some data info
-  if !(Par[:ImShow] == false && Par[:ImSave] == false)
-    @info "Railway begin=" M[1, 1]
-    @info "Railway end=" M[end, 1]
-    @info "Railway length=" M[end, 1] - M[1, 1]
-  end
-
-  #@info "Costs informations=" cj
   @info ">>>>>>>>>> LoadJLD2Data end"
   cj, SE, M, nm
 end

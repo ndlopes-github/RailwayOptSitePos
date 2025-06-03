@@ -290,7 +290,7 @@ for ns ∈ NS, is ∈ IS
     set_optimizer_attribute(model, "OutputFlag", 1) # Output info to log
     set_optimizer_attribute(model, "LogToConsole", 1) # 0: Disable console logging, 1: Enable
     set_optimizer_attribute(model, "Heuristics", 0.01) # Ranges from 0 to 1, where 0 disables heuristics and 1 maximizes heuristic effort. The default is 0.05 (5% of effort).
-    set_optimizer_attribute(model, "PreSolve", 1) # Controls the presolve level. (range -1 to 3; -1 = auto, 0 = no presolve, 1 = conservative, 2 = aggressive)
+    set_optimizer_attribute(model, "PreSolve", 2) # Controls the presolve level. (range -1 to 3; -1 = auto, 0 = no presolve, 1 = conservative, 2 = aggressive)
     # End Gurobi Configuration
 
 
@@ -426,7 +426,7 @@ for ns ∈ NS, is ∈ IS
 
     # Write in CSV for easy processing
     CSV.write(datadir("sims/"*set_dir, "raw_table.csv"), df_sols[!, Par[:nants]+1:end-1], delim=";", append=true)
-    open(datadir("sims/"*set_sir, "table.txt"), "a") do file
+    open(datadir("sims/"*set_dir, "table.txt"), "a") do file
         write(file, string(df_sols[!, Par[:nants]+1:end]))
         write(file, "\n\n")
     end
