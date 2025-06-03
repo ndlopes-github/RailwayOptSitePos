@@ -97,34 +97,55 @@ After running the model, you can expect the following output:
 
 + An incremental table  with the summary of the optimal solutions saved at data/sims/solvit/table.txt and data/sims/solvit/raw_table.csv.
 
-
 ## Simulated Data (see Section 3.2 of the paper):
 
-To reproduce the examples in Section 3.2, follow these steps to generate and simulate data:
-1. Generate data.
-Run the script `scripts/simsdatagen.sh` to generate data.
-Note: The randomization process is seed-based to ensure reproducibility.
-This script calls the Julia script `sim_instances_generator.jl`.
+### Generating and Simulating Data
 
-The generated data will be located in the directory:
-data/exp_pro/t1_12_8-t2_15_10-p_4_2_nD
+To reproduce the examples in Section 3.2, follow these steps:
 
-2- to generate the simulations 
-Run the script `scripts/loopsims.sh` to generate the simulations.
-which calls julia model_sim.sh
+0. Open a console or terminal at the project directory.
 
-Additional Notes:
+1. **Generate Data**
 
-1. The number of generated instances is controlled by the `simsdatagen.sh` script.
-2. The characteristics of the generated data are controlled by the `sim_instances_generator.jl` script.
-3. The number of simulations is controlled by the `loopsims.sh` script.
-4. The model parameters are controlled by the `model_sim.sh` script.
+   Run the following script to generate the simulated data:
+   ```
+   $ bash scripts/simsdatagen.sh
+   ```
+   > This script calls the Julia script `sim_instances_generator.jl`.  
+   > The randomization process is seed-based to ensure reproducibility.
 
+   The generated data will be located in:
+   ```
+   data/exp_pro/t1_12_8-t2_15_10-p_4_2_nD
+   ```
 
-The outputs, including tables and Gurobi log files, are saved in the directory `data/sims/t1_12_8-t2_15_10-p_4_2_nD`.
-This outputs are tables and gurobi log files used to generate the tables on the paper 
+2. **Generate Simulations**
 
-**Note:** To facilitate testing of this procedure, the number of generated instances in the scripts has been reduced, as data generation and simulations are time- and resource-intensive. Adjust these values in the scripts as needed for your experiments.
+   Run the following script to generate the simulations:
+   ```
+   $ bash scripts/loopsims.sh
+   ```
+   > This script calls the Julia script `model_sim.sh`.
+
+### Output
+
+After running the simulations, you can expect the following output:
+
++ Tables and Gurobi log files saved in:
+  ```
+  data/sims/t1_12_8-t2_15_10-p_4_2_nD
+  ```
++ These outputs are used to generate the tables in the paper.
+
+### Additional Notes
+
+- The number of generated instances is controlled by the `simsdatagen.sh` script.
+- The characteristics of the generated data are controlled by the `sim_instances_generator.jl` script.
+- The number of simulations is controlled by the `loopsims.sh` script.
+- The model parameters are controlled by the `model_sim.sh` script.
+
+**Note:**  
+To facilitate testing, the number of generated instances in the scripts has been reduced, as data generation and simulations are time- and resource-intensive. Adjust these values in the scripts as needed for your experiments.
 
 # Contributing
 
