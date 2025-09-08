@@ -6,20 +6,22 @@ This repository reflects the implementation of an algorithm based on a paper tha
 
    > Title: Minimizing costs in signal provision from communication antennas along a railway line
 
-   > Authors: [To appear]
-<!---
+   
+
    > Authors: A. Araújo 1, J. O. Cerdeira 2, N. Lopes 3, A. Moura 4
 
    > 1- CMUC, Department of Mathematics, University of Coimbra;
     2- CMA, Department of Mathematics, NOVA University Lisbon;
-    3- ISEL, Polytechnic of Lisboa, and CEMAT, University of Lisboa;
+    3- ISEL, Polytechnic of Lisbon, and CEMAT, University of Lisbon;
     4- ISEP-LEMA, Polytechnic of Porto, and CMUP, University of Porto;
---->
-   > Journal: [To appear]
+
+   > Journal: [4OR](https://link.springer.com/journal/10288)
 
    > Publication Date: [To appear]
 
-   > Abstract: [To appear]
+   > Abstract:
+In this paper we address a wireless network design problem on a railway line. Given a finite set of locations along a railway line and different types of communication antennas that can be installed at each of these locations, which locations and which type of antenna should be selected to ensure a certain level of signal coverage along the railway line while minimizing construction costs?
+We formulate the problem as a 0/1 linear optimization model, prove that the problem is NP-hard, and report computational experiments using real and simulated data. The computational tests showed that the model is capable of solving the problem for railway lines longer than any existing real railway lines. 
 
 # Description
 
