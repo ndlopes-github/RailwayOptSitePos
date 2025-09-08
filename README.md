@@ -10,9 +10,9 @@ This repository reflects the implementation of an algorithm based on a paper tha
 
    > Authors: A. Araújo 1, J. O. Cerdeira 2, N. Lopes 3, A. Moura 4
 
-   > 1- CMUC, Department of Mathematics, University of Coimbra;
-   > 2- CMA, Department of Mathematics, NOVA University Lisbon;
-   > 3- ISEL, Polytechnic of Lisbon, and CEMAT, University of Lisbon;
+   > 1- CMUC, Department of Mathematics, University of Coimbra;<br>
+   > 2- CMA, Department of Mathematics, NOVA University Lisbon;<br>
+   > 3- ISEL, Polytechnic of Lisbon, and CEMAT, University of Lisbon;<br>
    > 4- ISEP-LEMA, Polytechnic of Porto, and CMUP, University of Porto;
 
    > Journal: [4OR](https://link.springer.com/journal/10288)
