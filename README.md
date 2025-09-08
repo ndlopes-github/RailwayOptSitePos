@@ -15,7 +15,7 @@ This repository reflects the implementation of an algorithm based on a paper tha
    > 3- ISEL, Polytechnic of Lisbon, and CEMAT, University of Lisbon;<br>
    > 4- ISEP-LEMA, Polytechnic of Porto, and CMUP, University of Porto;
 
-   > Journal: [4OR](https://link.springer.com/journal/10288)
+   > Journal: [4OR -- https://link.springer.com/journal/10288](https://link.springer.com/journal/10288) 
 
    > Publication Date: [To appear]
 
