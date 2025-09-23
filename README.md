@@ -125,7 +125,7 @@ git clone https://github.com/ndlopes-github/RailwayOptSitePos.git
    data/exp_pro/t1_12_8-t2_15_10-p_4_2_nD
    ```
 
-2. **Generate Simulations**
+3. **Generate Simulations**
 
    Run the following script to generate the simulations:
    ```
