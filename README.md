@@ -38,9 +38,14 @@ to make a reproducible scientific project named
 
 To (locally) reproduce this project, do the following:
 
-0. Download this code base. Notice that raw data are typically not included in the
+1. Download this code base. Notice that raw data are typically not included in the
    git-history and may need to be downloaded independently.
-1. Open a Julia console and do:
+
+```
+git clone https://github.com/ndlopes-github/RailwayOptSitePos.git
+```
+
+2. Open a Julia console and do:
    ```
    julia> using Pkg
    julia> Pkg.add("DrWatson") # install globally, for using `quickactivate`
@@ -106,10 +111,6 @@ After running the model, you can expect the following output:
 To reproduce the examples in Section 3.2, follow these steps:
 
 1. Open a console or terminal at the project directory.
-
-```
-git clone https://github.com/ndlopes-github/RailwayOptSitePos.git
-```
 
 2. **Generate Data**
 
