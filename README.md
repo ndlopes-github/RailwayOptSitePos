@@ -68,9 +68,9 @@ which auto-activate the project and enable local path handling from DrWatson.
 
 To run the model, follow the steps below:
 
-0. Open a console or terminal at the project directory.
+1. Open a console or terminal at the project directory.
 
-1. Run the following command:
+2. Run the following command:
    ```
    $julia scripts/model_solvit.jl
    ```
