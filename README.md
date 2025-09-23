@@ -105,13 +105,13 @@ After running the model, you can expect the following output:
 
 To reproduce the examples in Section 3.2, follow these steps:
 
-0. Open a console or terminal at the project directory.
+1. Open a console or terminal at the project directory.
 
 ```
 git clone https://github.com/ndlopes-github/RailwayOptSitePos.git
 ```
 
-1. **Generate Data**
+2. **Generate Data**
 
    Run the following script to generate the simulated data:
    ```
