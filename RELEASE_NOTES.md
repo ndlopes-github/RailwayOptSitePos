@@ -1,6 +1,6 @@
 # Release Notes
 
-## Version 0.5.0 - November 26, 2025
+## Version 0.5.1 - November 26, 2025
 
 [![DOI](https://zenodo.org/badge/659697901.svg)](https://doi.org/10.5281/zenodo.17725507)
 
