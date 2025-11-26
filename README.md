@@ -1,7 +1,7 @@
 # RailwayOptSitePos
 
 This repository reflects the implementation of an algorithm based on the following  paper. <br>
-Release v0.5.0 [![DOI](https://zenodo.org/badge/659697901.svg)](https://doi.org/10.5281/zenodo.17725507)
+Release v0.5.1 [![DOI](https://zenodo.org/badge/659697901.svg)](https://doi.org/10.5281/zenodo.17725507)
 ## Paper Details
 
    > Title: Minimizing costs in signal provision from communication antennas along a railway line <br>
