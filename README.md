@@ -4,7 +4,8 @@ This repository reflects the implementation of an algorithm based on a paper tha
 
 ## Paper Details
 
-   > Title: Minimizing costs in signal provision from communication antennas along a railway line [doi: 10.1007/s10288-025-00599-7](https://doi.org/10.1007/s10288-025-00599-7)
+   > Title: Minimizing costs in signal provision from communication antennas along a railway line 
+   [doi: 10.1007/s10288-025-00599-7](https://doi.org/10.1007/s10288-025-00599-7)
 
    
 
@@ -17,7 +18,7 @@ This repository reflects the implementation of an algorithm based on a paper tha
 
    > Journal: [4OR -- https://link.springer.com/journal/10288](https://link.springer.com/journal/10288) 
 
-   > Publication Date: [september 2025]
+   > Publication Date: [24 September 2025]
 
    > Abstract:
 In this paper we address a wireless network design problem on a railway line. Given a finite set of locations along a railway line and different types of communication antennas that can be installed at each of these locations, which locations and which type of antenna should be selected to ensure a certain level of signal coverage along the railway line while minimizing construction costs?
