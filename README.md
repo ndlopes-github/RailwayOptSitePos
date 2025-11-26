@@ -17,7 +17,7 @@ This repository reflects the implementation of an algorithm based on a paper tha
 
    > Journal: [4OR -- https://link.springer.com/journal/10288](https://link.springer.com/journal/10288) 
 
-   > Publication Date: [To appear]
+   > Publication Date: [september 2025]
 
    > Abstract:
 In this paper we address a wireless network design problem on a railway line. Given a finite set of locations along a railway line and different types of communication antennas that can be installed at each of these locations, which locations and which type of antenna should be selected to ensure a certain level of signal coverage along the railway line while minimizing construction costs?
