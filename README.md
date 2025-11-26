@@ -4,7 +4,7 @@ This repository reflects the implementation of an algorithm based on the followi
 
 ## Paper Details
 
-   > Title: Minimizing costs in signal provision from communication antennas along a railway line 
+   > Title: Minimizing costs in signal provision from communication antennas along a railway line <br>
    [doi: 10.1007/s10288-025-00599-7](https://doi.org/10.1007/s10288-025-00599-7)
 
    
